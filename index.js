@@ -316,9 +316,7 @@ var getDotFromRawText = function getDotFromRawText(text, resources) {
 
     result.push(node);
   });
-
-  var resourcesMap = _.keyBy(resources, 'id');
-
+  var resourcesMap = keyBy(resources, 'id');
   result.forEach(function (item, index) {
     var _getIdAndContentArray = getIdAndContentArrayFromText(item.content),
         id = _getIdAndContentArray.id,
