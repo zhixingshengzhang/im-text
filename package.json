@@ -1,0 +1,21 @@
+{
+  "name": "im-text",
+  "version": "0.0.1",
+  "description": "对话体",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://codeup.teambition.com/5eeb0aa58925887296292c7a/admin/im-text.git"
+  },
+  "keywords": [
+    "im"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "nanoid": "^3.1.12"
+  }
+}
