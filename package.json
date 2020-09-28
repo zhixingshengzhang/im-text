@@ -2,7 +2,7 @@
   "name": "im-text",
   "version": "0.0.2",
   "description": "对话体",
-  "main": "src/index.js",
+  "main": "index.js",
   "scripts": {
     "build": "gulp --gulpfile build/gulpfile.js"
   },
