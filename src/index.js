@@ -253,7 +253,7 @@ export const  getDotFromRawText = (text, resources) => {
         }
         result.push(node);
     });
-    const resourcesMap = _.keyBy(resources, 'id');
+    const resourcesMap = keyBy(resources, 'id');
     result.forEach((item, index) => {
         const { id, contentArray } = getIdAndContentArrayFromText(item.content);
         item.id = id || nanoid();
