@@ -282,7 +282,7 @@ export const  getDotFromRawText = (text, resources) => {
     };
 };
 
-module.exports.convertDotToRawText = (dot) => {
+export const convertDotToRawText = (dot) => {
     return dot.edges
         .map(({ id, role, content, choices, imType }) => {
             let text = content;
