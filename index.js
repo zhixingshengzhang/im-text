@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.formatContent = exports.TagNewLine = exports.TagUserName = exports.isMaterialType = exports.Tags = exports.getDotFromRawText = exports.IMType = exports.TagVideoAddMusic = exports.TagVideoAddAudio = exports.TagTakeVideoGuding = exports.TagTakeVideoJiang = exports.TagTakeVideoSheng = exports.TagTakeVideoGen = exports.TagTakeVideoShuai = exports.TagTakeVideoYi = exports.TagTakeVideoYao = exports.TagTakeVideoLa = exports.TagTakeVideoTui = exports.TagVideoSort = exports.TagVideoCut = exports.TagSubTitle = void 0;
+exports.formatContent = exports.TagNewLine = exports.TagUserName = exports.isMaterialType = exports.Tags = exports.convertDotToRawText = exports.getDotFromRawText = exports.IMType = exports.TagVideoAddMusic = exports.TagVideoAddAudio = exports.TagTakeVideoGuding = exports.TagTakeVideoJiang = exports.TagTakeVideoSheng = exports.TagTakeVideoGen = exports.TagTakeVideoShuai = exports.TagTakeVideoYi = exports.TagTakeVideoYao = exports.TagTakeVideoLa = exports.TagTakeVideoTui = exports.TagVideoSort = exports.TagVideoCut = exports.TagSubTitle = void 0;
 
 var _nanoid = require("nanoid");
 
@@ -61,7 +61,7 @@ var TagVideoCut = '【视频素材剪辑】';
 exports.TagVideoCut = TagVideoCut;
 var TagVideoSort = '【视频素材排序】';
 exports.TagVideoSort = TagVideoSort;
-var TagTakeVideoTui = '【拍视频-p推】';
+var TagTakeVideoTui = '【拍视频-推】';
 exports.TagTakeVideoTui = TagTakeVideoTui;
 var TagTakeVideoLa = '【拍视频-拉】';
 exports.TagTakeVideoLa = TagTakeVideoLa;
@@ -351,7 +351,7 @@ var getDotFromRawText = function getDotFromRawText(text, resources) {
 
 exports.getDotFromRawText = getDotFromRawText;
 
-module.exports.convertDotToRawText = function (dot) {
+var convertDotToRawText = function convertDotToRawText(dot) {
   return dot.edges.map(function (_ref3) {
     var id = _ref3.id,
         role = _ref3.role,
@@ -391,6 +391,7 @@ module.exports.convertDotToRawText = function (dot) {
   }).join('\n\n');
 };
 
+exports.convertDotToRawText = convertDotToRawText;
 var Tags = [{
   tag: 'ID',
   type: 'ID'
