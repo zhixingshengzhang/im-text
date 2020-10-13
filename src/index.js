@@ -16,6 +16,8 @@ const keyBy = (items, key = "id", keepItemReference = false) => {
   });
   return result;
 };
+const TAG_START = "【";
+const TAG_END = "】";
 const RightChoiceTag = "【正确】";
 const TagSteps = "【步骤】";
 const TagID = "【ID】";
@@ -142,7 +144,15 @@ const convertContentArrayToRawContent = (contentArray) => {
   const tagsMap = keyBy(Tags, "type");
   return contentArray.map(({ content, type }) => {
     if (tagsMap[type]) {
-      return tagsMap[type].tag + content + tagsMap[type].tag;
+      return (
+        TAG_START +
+        tagsMap[type].tag +
+        TAG_END +
+        content +
+        TAG_START +
+        tagsMap[type].tag +
+        TAG_END
+      );
     }
     return content;
   });
@@ -282,7 +292,7 @@ export const getMaterialIdsFromContent = (text) => {
   const ids = new Set();
   const getIds = (contentArray) => {
     if (arrayHasContent(contentArray)) {
-        contentArray.forEach((item) => {
+      contentArray.forEach((item) => {
         if (isMaterialType(item.type) && item.content) {
           ids.add(item.content);
         }
