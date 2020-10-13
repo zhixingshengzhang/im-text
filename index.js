@@ -215,7 +215,7 @@ var convertContentArrayToRawContent = function convertContentArrayToRawContent(c
     }
 
     return content;
-  });
+  }).join('');
 };
 
 var getDotFromRawText = function getDotFromRawText(text, resources) {
