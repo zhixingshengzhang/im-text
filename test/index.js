@@ -29,7 +29,7 @@ describe("im-text", function () {
   describe("bold inside choice", function () {
     const targetIds = ["1", "2", "3", "4"];
     let dot = getDotFromRawText(`小知：选择内容
-- 【粗】选项1【粗】
+- 【粗】选项1【粗】阿斯顿发
 错误解释1（可不填）
 - 选项2【正确】
 正确解释（可不填）
@@ -39,7 +39,7 @@ describe("im-text", function () {
     const text = convertDotToRawText(dot);
     assert.strictEqual(
       getDotFromRawText(text).edges[0].choices[0].content.startsWith(
-        "【粗】选项1【粗】"
+        "【粗】选项1【粗】阿斯顿发"
       ),
       true
     );

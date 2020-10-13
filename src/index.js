@@ -155,7 +155,7 @@ const convertContentArrayToRawContent = (contentArray) => {
       );
     }
     return content;
-  });
+  }).join('');
 };
 export const getDotFromRawText = (text, resources) => {
   const items = text
