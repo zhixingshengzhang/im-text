@@ -26,4 +26,22 @@ describe("im-text", function () {
 【图片】3【图片】`);
     assert.strictEqual(JSON.stringify(targetIds), JSON.stringify(ids));
   });
+  describe("bold inside choice", function () {
+    const targetIds = ["1", "2", "3", "4"];
+    let dot = getDotFromRawText(`小知：选择内容
+- 【粗】选项1【粗】
+错误解释1（可不填）
+- 选项2【正确】
+正确解释（可不填）
+- 选项3
+错误解释3（可不填，会继承前面的错误解释）
+`);
+    const text = convertDotToRawText(dot);
+    assert.strictEqual(
+      getDotFromRawText(text).edges[0].choices[0].content.startsWith(
+        "【粗】选项1【粗】"
+      ),
+      true
+    );
+  });
 });
