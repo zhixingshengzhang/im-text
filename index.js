@@ -52,6 +52,8 @@ var keyBy = function keyBy(items) {
   return result;
 };
 
+var TAG_START = "【";
+var TAG_END = "】";
 var RightChoiceTag = "【正确】";
 var TagSteps = "【步骤】";
 var TagID = "【ID】";
@@ -209,7 +211,7 @@ var convertContentArrayToRawContent = function convertContentArrayToRawContent(c
         type = _ref2.type;
 
     if (tagsMap[type]) {
-      return tagsMap[type].tag + content + tagsMap[type].tag;
+      return TAG_START + tagsMap[type].tag + TAG_END + content + TAG_START + tagsMap[type].tag + TAG_END;
     }
 
     return content;
