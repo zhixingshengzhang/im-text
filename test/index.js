@@ -1,20 +1,21 @@
-require("mocha");
-const assert = require("assert");
+require('mocha');
+const assert = require('assert');
+require('@babel/register');
 const {
   getDotFromRawText,
   convertDotToRawText,
   getMaterialIdsFromContent,
-} = require("./../src/index");
+} = require('./../src/index');
 const assertTextOK = (text) => {
   assert.strictEqual(text, convertDotToRawText(getDotFromRawText(text)));
 };
-describe("im-text", function () {
-  describe("steps", function () {
-    assertTextOK("小知：测试");
+describe('im-text', function () {
+  it('steps', function () {
+    assertTextOK('小知：测试');
     assert.strictEqual(1, 1);
   });
-  describe("getMaterials", function () {
-    const targetIds = ["1", "2", "3", "4"];
+  it('getMaterials', function () {
+    const targetIds = ['1', '2', '3', '4'];
     const ids = getMaterialIdsFromContent(`小知老师：【图片】1【图片】
 
 小知老师：【图片】2【图片】
@@ -26,8 +27,9 @@ describe("im-text", function () {
 【图片】3【图片】`);
     assert.strictEqual(JSON.stringify(targetIds), JSON.stringify(ids));
   });
-  describe("bold inside choice", function () {
-    const targetIds = ["1", "2", "3", "4"];
+
+  it('bold inside choice', function () {
+    const targetIds = ['1', '2', '3', '4'];
     let dot = getDotFromRawText(`小知：选择内容
 - 【粗】选项1【粗】阿斯顿发
 错误解释1（可不填）
@@ -39,9 +41,23 @@ describe("im-text", function () {
     const text = convertDotToRawText(dot);
     assert.strictEqual(
       getDotFromRawText(text).edges[0].choices[0].content.startsWith(
-        "【粗】选项1【粗】阿斯顿发"
+        '【粗】选项1【粗】阿斯顿发'
       ),
       true
+    );
+  });
+
+  it('fillBlank', function () {
+    const text =
+      '【填空题】说出你最喜欢的短视频阿发阿发阿发【ID】123 【ID】\n提示文字：请输入';
+    assert.strictEqual(convertDotToRawText(getDotFromRawText(text)), text);
+    const textWithoutId =
+      '【填空题】说出你最喜欢的短视频阿发阿发阿发\n提示文字：请输入';
+    const dot = getDotFromRawText(textWithoutId);
+    assert.strictEqual(dot.edges[0].contentArray.length, 1);
+    assert.strictEqual(
+      dot.edges[0].contentArray[0].content,
+      '说出你最喜欢的短视频阿发阿发阿发'
     );
   });
 });

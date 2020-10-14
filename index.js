@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.formatContent = exports.TagNewLine = exports.TagUserName = exports.isMaterialType = exports.Tags = exports.convertDotToRawText = exports.getMaterialIdsFromContent = exports.getDotFromRawText = exports.IMType = exports.TagVideoAddMusic = exports.TagVideoAddAudio = exports.TagTakeVideoGuding = exports.TagTakeVideoJiang = exports.TagTakeVideoSheng = exports.TagTakeVideoGen = exports.TagTakeVideoShuai = exports.TagTakeVideoYi = exports.TagTakeVideoYao = exports.TagTakeVideoLa = exports.TagTakeVideoTui = exports.TagVideoSort = exports.TagVideoCut = exports.TagSubTitle = void 0;
+exports.formatContent = exports.TagNewLine = exports.TagUserName = exports.isMaterialType = exports.Tags = exports.convertDotToRawText = exports.getMaterialIdsFromContent = exports.getDotFromRawText = exports.IMType = exports.generateIdTag = exports.TagVideoAddMusic = exports.TagVideoAddAudio = exports.TagTakeVideoGuding = exports.TagTakeVideoJiang = exports.TagTakeVideoSheng = exports.TagTakeVideoGen = exports.TagTakeVideoShuai = exports.TagTakeVideoYi = exports.TagTakeVideoYao = exports.TagTakeVideoLa = exports.TagTakeVideoTui = exports.TagVideoSort = exports.TagVideoCut = exports.TagSubTitle = exports.TagFillBlank = exports.FillBlankPlaceholderPrefix = exports.TagTask = exports.TagID = exports.TagSteps = exports.RightChoiceTag = exports.TAG_END = exports.TAG_START = void 0;
 
 var _nanoid = require("nanoid");
 
@@ -28,9 +28,9 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 var MaterialType = {
-  image: "image",
-  audio: "audio",
-  video: "video"
+  image: 'image',
+  audio: 'audio',
+  video: 'video'
 };
 
 var arrayHasContent = function arrayHasContent(array) {
@@ -38,7 +38,7 @@ var arrayHasContent = function arrayHasContent(array) {
 };
 
 var keyBy = function keyBy(items) {
-  var key = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "id";
+  var key = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'id';
   var keepItemReference = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
   var result = {};
 
@@ -52,52 +52,68 @@ var keyBy = function keyBy(items) {
   return result;
 };
 
-var TAG_START = "【";
-var TAG_END = "】";
-var RightChoiceTag = "【正确】";
-var TagSteps = "【步骤】";
-var TagID = "【ID】";
-var TagTask = "【课后练习】";
-var TagSubTitle = "【小标题】";
+var TAG_START = '【';
+exports.TAG_START = TAG_START;
+var TAG_END = '】';
+exports.TAG_END = TAG_END;
+var RightChoiceTag = '【正确】';
+exports.RightChoiceTag = RightChoiceTag;
+var TagSteps = '【步骤】';
+exports.TagSteps = TagSteps;
+var TagID = '【ID】';
+exports.TagID = TagID;
+var TagTask = '【课后练习】';
+exports.TagTask = TagTask;
+var FillBlankPlaceholderPrefix = '提示文字：';
+exports.FillBlankPlaceholderPrefix = FillBlankPlaceholderPrefix;
+var TagFillBlank = '【填空题】';
+exports.TagFillBlank = TagFillBlank;
+var TagSubTitle = '【小标题】';
 exports.TagSubTitle = TagSubTitle;
-var TagVideoCut = "【视频素材剪辑】";
+var TagVideoCut = '【视频素材剪辑】';
 exports.TagVideoCut = TagVideoCut;
-var TagVideoSort = "【视频素材排序】";
+var TagVideoSort = '【视频素材排序】';
 exports.TagVideoSort = TagVideoSort;
-var TagTakeVideoTui = "【拍视频-推】";
+var TagTakeVideoTui = '【拍视频-推】';
 exports.TagTakeVideoTui = TagTakeVideoTui;
-var TagTakeVideoLa = "【拍视频-拉】";
+var TagTakeVideoLa = '【拍视频-拉】';
 exports.TagTakeVideoLa = TagTakeVideoLa;
-var TagTakeVideoYao = "【拍视频-摇】";
+var TagTakeVideoYao = '【拍视频-摇】';
 exports.TagTakeVideoYao = TagTakeVideoYao;
-var TagTakeVideoYi = "【拍视频-移】";
+var TagTakeVideoYi = '【拍视频-移】';
 exports.TagTakeVideoYi = TagTakeVideoYi;
-var TagTakeVideoShuai = "【拍视频-甩】";
+var TagTakeVideoShuai = '【拍视频-甩】';
 exports.TagTakeVideoShuai = TagTakeVideoShuai;
-var TagTakeVideoGen = "【拍视频-跟】";
+var TagTakeVideoGen = '【拍视频-跟】';
 exports.TagTakeVideoGen = TagTakeVideoGen;
-var TagTakeVideoSheng = "【拍视频-升】";
+var TagTakeVideoSheng = '【拍视频-升】';
 exports.TagTakeVideoSheng = TagTakeVideoSheng;
-var TagTakeVideoJiang = "【拍视频-降】";
+var TagTakeVideoJiang = '【拍视频-降】';
 exports.TagTakeVideoJiang = TagTakeVideoJiang;
-var TagTakeVideoGuding = "【拍视频-固定】";
+var TagTakeVideoGuding = '【拍视频-固定】';
 exports.TagTakeVideoGuding = TagTakeVideoGuding;
-var TagVideoAddAudio = "【视频素材-录音】";
+var TagVideoAddAudio = '【视频素材-录音】';
 exports.TagVideoAddAudio = TagVideoAddAudio;
-var TagVideoAddMusic = "【视频素材-音乐】";
+var TagVideoAddMusic = '【视频素材-音乐】';
 exports.TagVideoAddMusic = TagVideoAddMusic;
-var RegexHasTag = /\S*【\S+】\S*/;
-var ChoiceStart = "- ";
+
+var generateIdTag = function generateIdTag(id) {
+  return TagID + (id || (0, _nanoid.nanoid)()) + TagID;
+};
+
+exports.generateIdTag = generateIdTag;
+var ChoiceStart = '- ';
 var IMType = {
-  singleChoice: "singleChoice",
-  task: "task",
-  steps: "steps",
-  subTitle: "subTitle",
-  videoCut: "videoCut",
-  videoSort: "videoSort",
-  videoAddAudio: "videoAddAudio",
-  videoAddMusic: "videoAddMusic",
-  takeVideoTLYY: "takeVideoTLYY"
+  singleChoice: 'singleChoice',
+  fillBlank: 'fillBlank',
+  task: 'task',
+  steps: 'steps',
+  subTitle: 'subTitle',
+  videoCut: 'videoCut',
+  videoSort: 'videoSort',
+  videoAddAudio: 'videoAddAudio',
+  videoAddMusic: 'videoAddMusic',
+  takeVideoTLYY: 'takeVideoTLYY'
 };
 /**
  * 将text按tag拆分成数组
@@ -118,7 +134,7 @@ var parseContent = function parseContent(content) {
     return {
       tag: tag,
       type: type,
-      index: content.indexOf("【" + tag)
+      index: content.indexOf('【' + tag)
     };
   });
   tagIndexList.sort(function (a, b) {
@@ -142,23 +158,23 @@ var parseContent = function parseContent(content) {
     } // 】
 
 
-    var startEndIndex = content.indexOf("】", index + tag.length + 1); // 【结尾】
+    var startEndIndex = content.indexOf('】', index + tag.length + 1); // 【结尾】
 
-    var nextIndex = content.indexOf("【" + tag + "】", startEndIndex);
+    var nextIndex = content.indexOf('【' + tag + '】', startEndIndex);
 
     if (startEndIndex >= 0 && nextIndex >= 0) {
       if (index > 0) {
         list.push({
-          type: "normal",
+          type: 'normal',
           content: content.slice(0, index)
         });
       }
 
       var subContent = content.slice(startEndIndex + 1, nextIndex);
-      var tagPropsStr = content.slice(index + tag.length + 1, startEndIndex).split(" ").filter(function (item) {
+      var tagPropsStr = content.slice(index + tag.length + 1, startEndIndex).split(' ').filter(function (item) {
         return !!item;
       }).map(function (item) {
-        var splitIndex = item.indexOf("=");
+        var splitIndex = item.indexOf('=');
         return {
           name: splitIndex > 0 ? item.slice(0, splitIndex) : item,
           value: splitIndex > 0 ? item.slice(splitIndex + 1) : true
@@ -178,7 +194,7 @@ var parseContent = function parseContent(content) {
   }
 
   return [].concat(_toConsumableArray(list), [{
-    type: "normal",
+    type: 'normal',
     content: content
   }]);
 };
@@ -190,7 +206,7 @@ var getIdAndContentArrayFromText = function getIdAndContentArrayFromText(text) {
   var contentArray = [];
   var ids = [];
   list.forEach(function (item) {
-    if (item.type == "ID") {
+    if (item.type == 'ID') {
       ids.push(item);
     } else {
       contentArray.push(item);
@@ -202,10 +218,10 @@ var getIdAndContentArrayFromText = function getIdAndContentArrayFromText(text) {
   };
 };
 
-var TagToIMTypeMap = (_TagToIMTypeMap = {}, _defineProperty(_TagToIMTypeMap, TagSubTitle, IMType.subTitle), _defineProperty(_TagToIMTypeMap, TagSteps, IMType.steps), _defineProperty(_TagToIMTypeMap, TagTask, IMType.task), _defineProperty(_TagToIMTypeMap, TagVideoCut, IMType.videoCut), _defineProperty(_TagToIMTypeMap, TagVideoSort, IMType.videoSort), _defineProperty(_TagToIMTypeMap, TagVideoAddAudio, IMType.videoAddAudio), _defineProperty(_TagToIMTypeMap, TagVideoAddMusic, IMType.videoAddMusic), _TagToIMTypeMap);
+var TagToIMTypeMap = (_TagToIMTypeMap = {}, _defineProperty(_TagToIMTypeMap, TagSubTitle, IMType.subTitle), _defineProperty(_TagToIMTypeMap, TagSteps, IMType.steps), _defineProperty(_TagToIMTypeMap, TagFillBlank, IMType.fillBlank), _defineProperty(_TagToIMTypeMap, TagTask, IMType.task), _defineProperty(_TagToIMTypeMap, TagVideoCut, IMType.videoCut), _defineProperty(_TagToIMTypeMap, TagVideoSort, IMType.videoSort), _defineProperty(_TagToIMTypeMap, TagVideoAddAudio, IMType.videoAddAudio), _defineProperty(_TagToIMTypeMap, TagVideoAddMusic, IMType.videoAddMusic), _TagToIMTypeMap);
 
 var convertContentArrayToRawContent = function convertContentArrayToRawContent(contentArray) {
-  var tagsMap = keyBy(Tags, "type");
+  var tagsMap = keyBy(Tags, 'type');
   return contentArray.map(function (_ref2) {
     var content = _ref2.content,
         type = _ref2.type;
@@ -218,6 +234,8 @@ var convertContentArrayToRawContent = function convertContentArrayToRawContent(c
   }).join('');
 };
 
+var parseFillBlankFromText = function parseFillBlankFromText(text) {};
+
 var getDotFromRawText = function getDotFromRawText(text, resources) {
   var items = text.trim().split(/[\n\n]{2,}/).filter(function (item) {
     return !!item;
@@ -226,21 +244,21 @@ var getDotFromRawText = function getDotFromRawText(text, resources) {
 
   items.forEach(function (item) {
     var node = {};
-    var roleIndex = item.startsWith("【") ? -1 : item.indexOf("：");
+    var roleIndex = item.startsWith(TAG_START) ? -1 : item.indexOf('：');
 
-    if (roleIndex > 10) {
+    if (roleIndex > 10 || item.slice(0, roleIndex).includes('\n')) {
       roleIndex = -1;
     }
 
-    node.role = roleIndex >= 0 ? item.slice(0, roleIndex) : ""; // lastRole = node.role;
+    node.role = roleIndex >= 0 ? item.slice(0, roleIndex) : ''; // lastRole = node.role;
 
-    var textItems = item.split("\n").filter(function (item) {
+    var textItems = item.split('\n').filter(function (item) {
       return !!item;
     });
     var selectIndex = textItems.findIndex(function (i) {
-      return i.startsWith("1.") || i.startsWith(ChoiceStart);
+      return i.startsWith('1.') || i.startsWith(ChoiceStart);
     });
-    node.content = textItems.slice(0, selectIndex >= 0 ? selectIndex : textItems.length + 1).join("\n").slice(roleIndex >= 0 ? roleIndex + 1 : 0);
+    node.content = textItems.slice(0, selectIndex >= 0 ? selectIndex : textItems.length + 1).join('\n').slice(roleIndex >= 0 ? roleIndex + 1 : 0);
     var specialTag = Object.keys(TagToIMTypeMap).find(function (item) {
       return node.content.startsWith(item);
     });
@@ -254,12 +272,23 @@ var getDotFromRawText = function getDotFromRawText(text, resources) {
       node.imType = IMType.takeVideoTLYY;
     }
 
+    if (node.imType == IMType.fillBlank) {
+      var contentList = node.content.split('\n').filter(function (item) {
+        return !!item;
+      });
+
+      if (contentList.length > 1 && contentList[contentList.length - 1].startsWith(FillBlankPlaceholderPrefix)) {
+        node.placeholder = contentList[contentList.length - 1].slice(FillBlankPlaceholderPrefix.length);
+        node.content = contentList.slice(0, -1).join('\n');
+      }
+    }
+
     if (selectIndex >= 0) {
       var choices = [];
       textItems.slice(selectIndex).forEach(function (item) {
         if (/^[0-9]\./.test(item)) {
           choices.push({
-            content: item.slice(item.indexOf(".") + 1),
+            content: item.slice(item.indexOf('.') + 1),
             hintList: []
           });
         } else if (item.startsWith(ChoiceStart)) {
@@ -273,7 +302,7 @@ var getDotFromRawText = function getDotFromRawText(text, resources) {
       });
       choices.forEach(function (item) {
         if (item.hintList.length > 0) {
-          item.hint = item.hintList.join("\n");
+          item.hint = item.hintList.join('\n');
         }
 
         delete item.hintList;
@@ -320,7 +349,7 @@ var getDotFromRawText = function getDotFromRawText(text, resources) {
 
     result.push(node);
   });
-  var resourcesMap = keyBy(resources, "id");
+  var resourcesMap = keyBy(resources, 'id');
   result.forEach(function (item, index) {
     var _getIdAndContentArray = getIdAndContentArrayFromText(item.content),
         id = _getIdAndContentArray.id,
@@ -348,7 +377,7 @@ var getDotFromRawText = function getDotFromRawText(text, resources) {
     });
   });
   return {
-    content: "test",
+    content: 'test',
     edges: result
   };
 };
@@ -390,7 +419,8 @@ var convertDotToRawText = function convertDotToRawText(dot) {
         role = _ref3.role,
         content = _ref3.content,
         choices = _ref3.choices,
-        imType = _ref3.imType;
+        imType = _ref3.imType,
+        placeholder = _ref3.placeholder;
     var text = content;
     var specialTag = Object.keys(TagToIMTypeMap).find(function (item) {
       return TagToIMTypeMap[item] == imType;
@@ -400,53 +430,57 @@ var convertDotToRawText = function convertDotToRawText(dot) {
       text = specialTag + text;
     }
 
-    if ([IMType.singleChoice, IMType.takeVideoTLYY, IMType.videoCut, IMType.videoSort, IMType.videoAddAudio, IMType.videoAddMusic].some(function (item) {
+    if ([IMType.singleChoice, IMType.fillBlank, IMType.takeVideoTLYY, IMType.videoCut, IMType.videoSort, IMType.videoAddAudio, IMType.videoAddMusic].some(function (item) {
       return item == imType;
     }) && !content.includes(id)) {
-      text += "".concat(TagID).concat(id).concat(TagID);
+      text += generateIdTag(id);
     }
 
     if ([IMType.singleChoice, IMType.steps].some(function (item) {
       return item == imType;
     }) && arrayHasContent(choices)) {
-      text += "\n" + choices.map(function (_ref4) {
+      text += '\n' + choices.map(function (_ref4) {
         var id = _ref4.id,
             content = _ref4.content,
             contentArray = _ref4.contentArray,
             hint = _ref4.hint,
             hintFake = _ref4.hintFake,
             right = _ref4.right;
-        return ChoiceStart + (contentArray ? convertContentArrayToRawContent(contentArray) : content) + (imType == IMType.singleChoice ? "".concat(TagID).concat(id).concat(TagID) : "") + (right ? RightChoiceTag : "") + (hint && !hintFake ? "\n" + hint : "");
-      }).join("\n");
+        return ChoiceStart + (contentArray ? convertContentArrayToRawContent(contentArray) : content) + (imType == IMType.singleChoice ? "".concat(TagID).concat(id).concat(TagID) : '') + (right ? RightChoiceTag : '') + (hint && !hintFake ? '\n' + hint : '');
+      }).join('\n');
     }
 
-    return (role ? role + "：" : "") + text;
-  }).join("\n\n");
+    if (imType == IMType.fillBlank && placeholder) {
+      text += '\n' + FillBlankPlaceholderPrefix + placeholder;
+    }
+
+    return (role ? role + '：' : '') + text;
+  }).join('\n\n');
 };
 
 exports.convertDotToRawText = convertDotToRawText;
 var Tags = [{
-  tag: "ID",
-  type: "ID"
+  tag: 'ID',
+  type: 'ID'
 }, {
-  tag: "粗",
-  type: "bold"
+  tag: '粗',
+  type: 'bold'
 }, // 加粗
 {
-  tag: "斜",
-  type: "italic"
+  tag: '斜',
+  type: 'italic'
 }, // 斜体
 {
-  tag: "文本样式",
-  type: "textStyle"
+  tag: '文本样式',
+  type: 'textStyle'
 }, {
-  tag: "图片",
+  tag: '图片',
   type: MaterialType.image
 }, {
-  tag: "音频",
+  tag: '音频',
   type: MaterialType.audio
 }, {
-  tag: "视频",
+  tag: '视频',
   type: MaterialType.video
 }];
 exports.Tags = Tags;
@@ -458,10 +492,10 @@ var isMaterialType = function isMaterialType(type) {
 };
 
 exports.isMaterialType = isMaterialType;
-var TagUserName = "【用户名】";
+var TagUserName = '【用户名】';
 exports.TagUserName = TagUserName;
 var TagUserNameRegex = /【用户名】/g;
-var TagNewLine = "【换行】";
+var TagNewLine = '【换行】';
 exports.TagNewLine = TagNewLine;
 var TagNewLineRegex = /【换行】/g;
 
@@ -469,8 +503,8 @@ var formatContent = function formatContent(content) {
   var _ref5 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
       getUserName = _ref5.getUserName;
 
-  var userName = (getUserName ? getUserName() : "") || "用户";
-  return (content || "").replace(TagUserNameRegex, userName).replace(TagNewLineRegex, "\n");
+  var userName = (getUserName ? getUserName() : '') || '用户';
+  return (content || '').replace(TagUserNameRegex, userName).replace(TagNewLineRegex, '\n');
 };
 
 exports.formatContent = formatContent;
