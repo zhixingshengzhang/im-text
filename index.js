@@ -307,9 +307,9 @@ var getDotFromRawText = function getDotFromRawText(text, resources) {
 
         delete item.hintList;
 
-        if (item.content.endsWith(RightChoiceTag)) {
+        if (item.content.includes(RightChoiceTag)) {
           item.right = true;
-          item.content = item.content.slice(0, -RightChoiceTag.length);
+          item.content = item.content.replace(new RegExp(RightChoiceTag, 'g'), '');
         }
       });
 
