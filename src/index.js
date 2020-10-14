@@ -1,12 +1,12 @@
-import { nanoid } from "nanoid";
+import { nanoid } from 'nanoid';
 
 const MaterialType = {
-  image: "image",
-  audio: "audio",
-  video: "video",
+  image: 'image',
+  audio: 'audio',
+  video: 'video',
 };
 const arrayHasContent = (array) => Array.isArray(array) && array.length > 0;
-const keyBy = (items, key = "id", keepItemReference = false) => {
+const keyBy = (items, key = 'id', keepItemReference = false) => {
   let result = {};
   if (!Array.isArray(items) || items.length == 0) {
     return result;
@@ -16,38 +16,41 @@ const keyBy = (items, key = "id", keepItemReference = false) => {
   });
   return result;
 };
-const TAG_START = "【";
-const TAG_END = "】";
-const RightChoiceTag = "【正确】";
-const TagSteps = "【步骤】";
-const TagID = "【ID】";
-const TagTask = "【课后练习】";
-export const TagSubTitle = "【小标题】";
-export const TagVideoCut = "【视频素材剪辑】";
-export const TagVideoSort = "【视频素材排序】";
-export const TagTakeVideoTui = "【拍视频-推】";
-export const TagTakeVideoLa = "【拍视频-拉】";
-export const TagTakeVideoYao = "【拍视频-摇】";
-export const TagTakeVideoYi = "【拍视频-移】";
-export const TagTakeVideoShuai = "【拍视频-甩】";
-export const TagTakeVideoGen = "【拍视频-跟】";
-export const TagTakeVideoSheng = "【拍视频-升】";
-export const TagTakeVideoJiang = "【拍视频-降】";
-export const TagTakeVideoGuding = "【拍视频-固定】";
-export const TagVideoAddAudio = "【视频素材-录音】";
-export const TagVideoAddMusic = "【视频素材-音乐】";
-const RegexHasTag = /\S*【\S+】\S*/;
-const ChoiceStart = "- ";
+export const TAG_START = '【';
+export const TAG_END = '】';
+export const RightChoiceTag = '【正确】';
+export const TagSteps = '【步骤】';
+export const TagID = '【ID】';
+export const TagTask = '【课后练习】';
+export const FillBlankPlaceholderPrefix = '提示文字：';
+export const TagFillBlank = '【填空题】';
+export const TagSubTitle = '【小标题】';
+export const TagVideoCut = '【视频素材剪辑】';
+export const TagVideoSort = '【视频素材排序】';
+export const TagTakeVideoTui = '【拍视频-推】';
+export const TagTakeVideoLa = '【拍视频-拉】';
+export const TagTakeVideoYao = '【拍视频-摇】';
+export const TagTakeVideoYi = '【拍视频-移】';
+export const TagTakeVideoShuai = '【拍视频-甩】';
+export const TagTakeVideoGen = '【拍视频-跟】';
+export const TagTakeVideoSheng = '【拍视频-升】';
+export const TagTakeVideoJiang = '【拍视频-降】';
+export const TagTakeVideoGuding = '【拍视频-固定】';
+export const TagVideoAddAudio = '【视频素材-录音】';
+export const TagVideoAddMusic = '【视频素材-音乐】';
+export const generateIdTag = (id) => TagID + (id || nanoid()) + TagID;
+const ChoiceStart = '- ';
 export const IMType = {
-  singleChoice: "singleChoice",
-  task: "task",
-  steps: "steps",
-  subTitle: "subTitle",
-  videoCut: "videoCut",
-  videoSort: "videoSort",
-  videoAddAudio: "videoAddAudio",
-  videoAddMusic: "videoAddMusic",
-  takeVideoTLYY: "takeVideoTLYY",
+  singleChoice: 'singleChoice',
+  fillBlank: 'fillBlank',
+  task: 'task',
+  steps: 'steps',
+  subTitle: 'subTitle',
+  videoCut: 'videoCut',
+  videoSort: 'videoSort',
+  videoAddAudio: 'videoAddAudio',
+  videoAddMusic: 'videoAddMusic',
+  takeVideoTLYY: 'takeVideoTLYY',
 };
 /**
  * 将text按tag拆分成数组
@@ -59,7 +62,7 @@ const parseContent = (content, list = []) => {
   const tagIndexList = Tags.map(({ tag, type }) => ({
     tag,
     type,
-    index: content.indexOf("【" + tag),
+    index: content.indexOf('【' + tag),
   }));
   tagIndexList.sort((a, b) => {
     if (a.index == -1 && b.index != -1) {
@@ -75,23 +78,23 @@ const parseContent = (content, list = []) => {
       continue;
     }
     // 】
-    const startEndIndex = content.indexOf("】", index + tag.length + 1);
+    const startEndIndex = content.indexOf('】', index + tag.length + 1);
     // 【结尾】
-    const nextIndex = content.indexOf("【" + tag + "】", startEndIndex);
+    const nextIndex = content.indexOf('【' + tag + '】', startEndIndex);
     if (startEndIndex >= 0 && nextIndex >= 0) {
       if (index > 0) {
         list.push({
-          type: "normal",
+          type: 'normal',
           content: content.slice(0, index),
         });
       }
       const subContent = content.slice(startEndIndex + 1, nextIndex);
       const tagPropsStr = content
         .slice(index + tag.length + 1, startEndIndex)
-        .split(" ")
+        .split(' ')
         .filter((item) => !!item)
         .map((item) => {
-          const splitIndex = item.indexOf("=");
+          const splitIndex = item.indexOf('=');
           return {
             name: splitIndex > 0 ? item.slice(0, splitIndex) : item,
             value: splitIndex > 0 ? item.slice(splitIndex + 1) : true,
@@ -110,7 +113,7 @@ const parseContent = (content, list = []) => {
   return [
     ...list,
     {
-      type: "normal",
+      type: 'normal',
       content,
     },
   ];
@@ -120,7 +123,7 @@ const getIdAndContentArrayFromText = (text) => {
   const contentArray = [];
   const ids = [];
   list.forEach((item) => {
-    if (item.type == "ID") {
+    if (item.type == 'ID') {
       ids.push(item);
     } else {
       contentArray.push(item);
@@ -134,6 +137,7 @@ const getIdAndContentArrayFromText = (text) => {
 const TagToIMTypeMap = {
   [TagSubTitle]: IMType.subTitle,
   [TagSteps]: IMType.steps,
+  [TagFillBlank]: IMType.fillBlank,
   [TagTask]: IMType.task,
   [TagVideoCut]: IMType.videoCut,
   [TagVideoSort]: IMType.videoSort,
@@ -141,22 +145,25 @@ const TagToIMTypeMap = {
   [TagVideoAddMusic]: IMType.videoAddMusic,
 };
 const convertContentArrayToRawContent = (contentArray) => {
-  const tagsMap = keyBy(Tags, "type");
-  return contentArray.map(({ content, type }) => {
-    if (tagsMap[type]) {
-      return (
-        TAG_START +
-        tagsMap[type].tag +
-        TAG_END +
-        content +
-        TAG_START +
-        tagsMap[type].tag +
-        TAG_END
-      );
-    }
-    return content;
-  }).join('');
+  const tagsMap = keyBy(Tags, 'type');
+  return contentArray
+    .map(({ content, type }) => {
+      if (tagsMap[type]) {
+        return (
+          TAG_START +
+          tagsMap[type].tag +
+          TAG_END +
+          content +
+          TAG_START +
+          tagsMap[type].tag +
+          TAG_END
+        );
+      }
+      return content;
+    })
+    .join('');
 };
+const parseFillBlankFromText = (text) => {};
 export const getDotFromRawText = (text, resources) => {
   const items = text
     .trim()
@@ -166,19 +173,19 @@ export const getDotFromRawText = (text, resources) => {
   // let lastRole = '';
   items.forEach((item) => {
     let node = {};
-    let roleIndex = item.startsWith("【") ? -1 : item.indexOf("：");
-    if (roleIndex > 10) {
+    let roleIndex = item.startsWith(TAG_START) ? -1 : item.indexOf('：');
+    if (roleIndex > 10 || item.slice(0, roleIndex).includes('\n')) {
       roleIndex = -1;
     }
-    node.role = roleIndex >= 0 ? item.slice(0, roleIndex) : "";
+    node.role = roleIndex >= 0 ? item.slice(0, roleIndex) : '';
     // lastRole = node.role;
-    const textItems = item.split("\n").filter((item) => !!item);
+    const textItems = item.split('\n').filter((item) => !!item);
     const selectIndex = textItems.findIndex(
-      (i) => i.startsWith("1.") || i.startsWith(ChoiceStart)
+      (i) => i.startsWith('1.') || i.startsWith(ChoiceStart)
     );
     node.content = textItems
       .slice(0, selectIndex >= 0 ? selectIndex : textItems.length + 1)
-      .join("\n")
+      .join('\n')
       .slice(roleIndex >= 0 ? roleIndex + 1 : 0);
     const specialTag = Object.keys(TagToIMTypeMap).find((item) =>
       node.content.startsWith(item)
@@ -201,12 +208,26 @@ export const getDotFromRawText = (text, resources) => {
     ) {
       node.imType = IMType.takeVideoTLYY;
     }
+    if (node.imType == IMType.fillBlank) {
+      let contentList = node.content.split('\n').filter((item) => !!item);
+      if (
+        contentList.length > 1 &&
+        contentList[contentList.length - 1].startsWith(
+          FillBlankPlaceholderPrefix
+        )
+      ) {
+        node.placeholder = contentList[contentList.length - 1].slice(
+          FillBlankPlaceholderPrefix.length
+        );
+        node.content = contentList.slice(0, -1).join('\n');
+      }
+    }
     if (selectIndex >= 0) {
       let choices = [];
       textItems.slice(selectIndex).forEach((item) => {
         if (/^[0-9]\./.test(item)) {
           choices.push({
-            content: item.slice(item.indexOf(".") + 1),
+            content: item.slice(item.indexOf('.') + 1),
             hintList: [],
           });
         } else if (item.startsWith(ChoiceStart)) {
@@ -220,7 +241,7 @@ export const getDotFromRawText = (text, resources) => {
       });
       choices.forEach((item) => {
         if (item.hintList.length > 0) {
-          item.hint = item.hintList.join("\n");
+          item.hint = item.hintList.join('\n');
         }
         delete item.hintList;
         if (item.content.endsWith(RightChoiceTag)) {
@@ -260,7 +281,7 @@ export const getDotFromRawText = (text, resources) => {
     }
     result.push(node);
   });
-  const resourcesMap = keyBy(resources, "id");
+  const resourcesMap = keyBy(resources, 'id');
   result.forEach((item, index) => {
     const { id, contentArray } = getIdAndContentArrayFromText(item.content);
     item.id = id || nanoid();
@@ -282,7 +303,7 @@ export const getDotFromRawText = (text, resources) => {
     });
   });
   return {
-    content: "test",
+    content: 'test',
     edges: result,
   };
 };
@@ -312,7 +333,7 @@ export const getMaterialIdsFromContent = (text) => {
 };
 export const convertDotToRawText = (dot) => {
   return dot.edges
-    .map(({ id, role, content, choices, imType }) => {
+    .map(({ id, role, content, choices, imType, placeholder }) => {
       let text = content;
       const specialTag = Object.keys(TagToIMTypeMap).find(
         (item) => TagToIMTypeMap[item] == imType
@@ -323,6 +344,7 @@ export const convertDotToRawText = (dot) => {
       if (
         [
           IMType.singleChoice,
+          IMType.fillBlank,
           IMType.takeVideoTLYY,
           IMType.videoCut,
           IMType.videoSort,
@@ -331,14 +353,14 @@ export const convertDotToRawText = (dot) => {
         ].some((item) => item == imType) &&
         !content.includes(id)
       ) {
-        text += `${TagID}${id}${TagID}`;
+        text += generateIdTag(id);
       }
       if (
         [IMType.singleChoice, IMType.steps].some((item) => item == imType) &&
         arrayHasContent(choices)
       ) {
         text +=
-          "\n" +
+          '\n' +
           choices
             .map(({ id, content, contentArray, hint, hintFake, right }) => {
               return (
@@ -346,37 +368,40 @@ export const convertDotToRawText = (dot) => {
                 (contentArray
                   ? convertContentArrayToRawContent(contentArray)
                   : content) +
-                (imType == IMType.singleChoice ? `${TagID}${id}${TagID}` : "") +
-                (right ? RightChoiceTag : "") +
-                (hint && !hintFake ? "\n" + hint : "")
+                (imType == IMType.singleChoice ? `${TagID}${id}${TagID}` : '') +
+                (right ? RightChoiceTag : '') +
+                (hint && !hintFake ? '\n' + hint : '')
               );
             })
-            .join("\n");
+            .join('\n');
       }
-      return (role ? role + "：" : "") + text;
+      if (imType == IMType.fillBlank && placeholder) {
+        text += '\n' + FillBlankPlaceholderPrefix + placeholder;
+      }
+      return (role ? role + '：' : '') + text;
     })
-    .join("\n\n");
+    .join('\n\n');
 };
 export const Tags = [
-  { tag: "ID", type: "ID" },
-  { tag: "粗", type: "bold" }, // 加粗
-  { tag: "斜", type: "italic" }, // 斜体
-  { tag: "文本样式", type: "textStyle" },
-  { tag: "图片", type: MaterialType.image },
-  { tag: "音频", type: MaterialType.audio },
-  { tag: "视频", type: MaterialType.video },
+  { tag: 'ID', type: 'ID' },
+  { tag: '粗', type: 'bold' }, // 加粗
+  { tag: '斜', type: 'italic' }, // 斜体
+  { tag: '文本样式', type: 'textStyle' },
+  { tag: '图片', type: MaterialType.image },
+  { tag: '音频', type: MaterialType.audio },
+  { tag: '视频', type: MaterialType.video },
 ];
 export const isMaterialType = (type) =>
   [MaterialType.image, MaterialType.audio, MaterialType.video].some(
     (item) => item == type
   );
-export const TagUserName = "【用户名】";
+export const TagUserName = '【用户名】';
 const TagUserNameRegex = /【用户名】/g;
-export const TagNewLine = "【换行】";
+export const TagNewLine = '【换行】';
 const TagNewLineRegex = /【换行】/g;
 export const formatContent = (content, { getUserName } = {}) => {
-  const userName = (getUserName ? getUserName() : "") || "用户";
-  return (content || "")
+  const userName = (getUserName ? getUserName() : '') || '用户';
+  return (content || '')
     .replace(TagUserNameRegex, userName)
-    .replace(TagNewLineRegex, "\n");
+    .replace(TagNewLineRegex, '\n');
 };
