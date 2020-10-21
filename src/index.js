@@ -17,6 +17,7 @@ const keyBy = (items, key = 'id', keepItemReference = false) => {
   return result;
 };
 export const TAG_START = '【';
+export const TAG_ID_REGEX = /【ID】[A-Za-z0-9_-]+【ID】/;
 export const TAG_END = '】';
 export const RightChoiceTag = '【正确】';
 export const TagSteps = '【步骤】';
@@ -24,6 +25,7 @@ export const TagID = '【ID】';
 export const TagTask = '【课后练习】';
 export const FillBlankPlaceholderPrefix = '提示文字：';
 export const TagFillBlank = '【填空题】';
+export const TagMultipleChoice = '【多选题】';
 export const TagSubTitle = '【小标题】';
 export const TagVideoCut = '【视频素材剪辑】';
 export const TagVideoSort = '【视频素材排序】';
@@ -42,6 +44,7 @@ export const generateIdTag = (id) => TagID + (id || nanoid()) + TagID;
 const ChoiceStart = '- ';
 export const IMType = {
   singleChoice: 'singleChoice',
+  multipleChoice: 'multipleChoice',
   fillBlank: 'fillBlank',
   task: 'task',
   steps: 'steps',
@@ -137,6 +140,7 @@ const getIdAndContentArrayFromText = (text) => {
 const TagToIMTypeMap = {
   [TagSubTitle]: IMType.subTitle,
   [TagSteps]: IMType.steps,
+  [TagMultipleChoice]: IMType.multipleChoice,
   [TagFillBlank]: IMType.fillBlank,
   [TagTask]: IMType.task,
   [TagVideoCut]: IMType.videoCut,
@@ -173,16 +177,31 @@ export const getDotFromRawText = (text, resources) => {
   // let lastRole = '';
   items.forEach((item) => {
     let node = {};
-    let roleIndex = item.startsWith(TAG_START) ? -1 : item.indexOf('：');
-    if (roleIndex > 10 || item.slice(0, roleIndex).includes('\n')) {
+    const textItems = item.split('\n').filter((item) => !!item);
+    // handle id
+    if (textItems[0].startsWith(TagID)) {
+      const match = textItems[0].match(TAG_ID_REGEX);
+      if (match && match.index == 0) {
+        textItems[0] = textItems[0].slice(match[0].length);
+        node.id = getIdAndContentArrayFromText(match[0]).id;
+        if (!textItems[0]) {
+          textItems.splice(0, 1);
+        }
+      }
+    }
+    if (textItems.length == 0) {
+      return;
+    }
+    let roleIndex = textItems[0].startsWith(TAG_START)
+      ? -1
+      : textItems[0].indexOf('：');
+    if (roleIndex > 10) {
       roleIndex = -1;
     }
-    node.role = roleIndex >= 0 ? item.slice(0, roleIndex) : '';
+    node.role = roleIndex >= 0 ? textItems[0].slice(0, roleIndex) : '';
     // lastRole = node.role;
-    const textItems = item.split('\n').filter((item) => !!item);
-    const selectIndex = textItems.findIndex(
-      (i) => i.startsWith('1.') || i.startsWith(ChoiceStart)
-    );
+
+    const selectIndex = textItems.findIndex((i) => i.startsWith(ChoiceStart));
     node.content = textItems
       .slice(0, selectIndex >= 0 ? selectIndex : textItems.length + 1)
       .join('\n')
@@ -287,7 +306,13 @@ export const getDotFromRawText = (text, resources) => {
   const resourcesMap = keyBy(resources, 'id');
   result.forEach((item, index) => {
     const { id, contentArray } = getIdAndContentArrayFromText(item.content);
-    item.id = id || nanoid();
+    // 为之前的内容里带id兼容，后续改成 item.id = item.id || nanoid()
+    if (id) {
+      item.id = id;
+      item.content = item.content.replace(TagID + id + TagID, '');
+    } else {
+      item.id = item.id || nanoid();
+    }
     item.contentArray = contentArray;
     if (item.choices) {
       item.choices.forEach((item, i) => {
@@ -344,22 +369,11 @@ export const convertDotToRawText = (dot) => {
       if (specialTag) {
         text = specialTag + text;
       }
+
       if (
-        [
-          IMType.singleChoice,
-          IMType.fillBlank,
-          IMType.takeVideoTLYY,
-          IMType.videoCut,
-          IMType.videoSort,
-          IMType.videoAddAudio,
-          IMType.videoAddMusic,
-        ].some((item) => item == imType) &&
-        !content.includes(id)
-      ) {
-        text += generateIdTag(id);
-      }
-      if (
-        [IMType.singleChoice, IMType.steps].some((item) => item == imType) &&
+        [IMType.singleChoice, IMType.multipleChoice, IMType.steps].some(
+          (item) => item == imType
+        ) &&
         arrayHasContent(choices)
       ) {
         text +=
@@ -371,7 +385,11 @@ export const convertDotToRawText = (dot) => {
                 (contentArray
                   ? convertContentArrayToRawContent(contentArray)
                   : content) +
-                (imType == IMType.singleChoice ? `${TagID}${id}${TagID}` : '') +
+                ([IMType.singleChoice, IMType.multipleChoice].some(
+                  (item) => item == imType
+                )
+                  ? generateIdTag(id)
+                  : '') +
                 (right ? RightChoiceTag : '') +
                 (hint && !hintFake ? '\n' + hint : '')
               );
@@ -381,7 +399,9 @@ export const convertDotToRawText = (dot) => {
       if (imType == IMType.fillBlank && placeholder) {
         text += '\n' + FillBlankPlaceholderPrefix + placeholder;
       }
-      return (role ? role + '：' : '') + text;
+      return (
+        (id ? generateIdTag(id) + '\n' : '') + (role ? role + '：' : '') + text
+      );
     })
     .join('\n\n');
 };
