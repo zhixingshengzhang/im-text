@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.formatContent = exports.TagNewLine = exports.TagUserName = exports.isMaterialType = exports.Tags = exports.convertDotToRawText = exports.getMaterialIdsFromContent = exports.getDotFromRawText = exports.IMType = exports.generateIdTag = exports.TagVideoAddMusic = exports.TagVideoAddAudio = exports.TagTakeVideoGuding = exports.TagTakeVideoJiang = exports.TagTakeVideoSheng = exports.TagTakeVideoGen = exports.TagTakeVideoShuai = exports.TagTakeVideoYi = exports.TagTakeVideoYao = exports.TagTakeVideoLa = exports.TagTakeVideoTui = exports.TagVideoSort = exports.TagVideoCut = exports.TagSubTitle = exports.TagFillBlank = exports.FillBlankPlaceholderPrefix = exports.TagTask = exports.TagID = exports.TagSteps = exports.RightChoiceTag = exports.TAG_END = exports.TAG_START = void 0;
+exports.formatContent = exports.TagNewLine = exports.TagUserName = exports.isMaterialType = exports.Tags = exports.convertDotToRawText = exports.getMaterialIdsFromContent = exports.getDotFromRawText = exports.IMType = exports.generateIdTag = exports.TagVideoAddMusic = exports.TagVideoAddAudio = exports.TagTakeVideoGuding = exports.TagTakeVideoJiang = exports.TagTakeVideoSheng = exports.TagTakeVideoGen = exports.TagTakeVideoShuai = exports.TagTakeVideoYi = exports.TagTakeVideoYao = exports.TagTakeVideoLa = exports.TagTakeVideoTui = exports.TagVideoSort = exports.TagVideoCut = exports.TagSubTitle = exports.TagMultipleChoice = exports.TagFillBlank = exports.FillBlankPlaceholderPrefix = exports.TagTask = exports.TagID = exports.TagSteps = exports.RightChoiceTag = exports.TAG_END = exports.TAG_ID_REGEX = exports.TAG_START = void 0;
 
 var _nanoid = require("nanoid");
 
@@ -54,6 +54,8 @@ var keyBy = function keyBy(items) {
 
 var TAG_START = '【';
 exports.TAG_START = TAG_START;
+var TAG_ID_REGEX = /【ID】[A-Za-z0-9_-]+【ID】/;
+exports.TAG_ID_REGEX = TAG_ID_REGEX;
 var TAG_END = '】';
 exports.TAG_END = TAG_END;
 var RightChoiceTag = '【正确】';
@@ -68,6 +70,8 @@ var FillBlankPlaceholderPrefix = '提示文字：';
 exports.FillBlankPlaceholderPrefix = FillBlankPlaceholderPrefix;
 var TagFillBlank = '【填空题】';
 exports.TagFillBlank = TagFillBlank;
+var TagMultipleChoice = '【多选题】';
+exports.TagMultipleChoice = TagMultipleChoice;
 var TagSubTitle = '【小标题】';
 exports.TagSubTitle = TagSubTitle;
 var TagVideoCut = '【视频素材剪辑】';
@@ -105,6 +109,7 @@ exports.generateIdTag = generateIdTag;
 var ChoiceStart = '- ';
 var IMType = {
   singleChoice: 'singleChoice',
+  multipleChoice: 'multipleChoice',
   fillBlank: 'fillBlank',
   task: 'task',
   steps: 'steps',
@@ -218,7 +223,7 @@ var getIdAndContentArrayFromText = function getIdAndContentArrayFromText(text) {
   };
 };
 
-var TagToIMTypeMap = (_TagToIMTypeMap = {}, _defineProperty(_TagToIMTypeMap, TagSubTitle, IMType.subTitle), _defineProperty(_TagToIMTypeMap, TagSteps, IMType.steps), _defineProperty(_TagToIMTypeMap, TagFillBlank, IMType.fillBlank), _defineProperty(_TagToIMTypeMap, TagTask, IMType.task), _defineProperty(_TagToIMTypeMap, TagVideoCut, IMType.videoCut), _defineProperty(_TagToIMTypeMap, TagVideoSort, IMType.videoSort), _defineProperty(_TagToIMTypeMap, TagVideoAddAudio, IMType.videoAddAudio), _defineProperty(_TagToIMTypeMap, TagVideoAddMusic, IMType.videoAddMusic), _TagToIMTypeMap);
+var TagToIMTypeMap = (_TagToIMTypeMap = {}, _defineProperty(_TagToIMTypeMap, TagSubTitle, IMType.subTitle), _defineProperty(_TagToIMTypeMap, TagSteps, IMType.steps), _defineProperty(_TagToIMTypeMap, TagMultipleChoice, IMType.multipleChoice), _defineProperty(_TagToIMTypeMap, TagFillBlank, IMType.fillBlank), _defineProperty(_TagToIMTypeMap, TagTask, IMType.task), _defineProperty(_TagToIMTypeMap, TagVideoCut, IMType.videoCut), _defineProperty(_TagToIMTypeMap, TagVideoSort, IMType.videoSort), _defineProperty(_TagToIMTypeMap, TagVideoAddAudio, IMType.videoAddAudio), _defineProperty(_TagToIMTypeMap, TagVideoAddMusic, IMType.videoAddMusic), _TagToIMTypeMap);
 
 var convertContentArrayToRawContent = function convertContentArrayToRawContent(contentArray) {
   var tagsMap = keyBy(Tags, 'type');
@@ -244,19 +249,37 @@ var getDotFromRawText = function getDotFromRawText(text, resources) {
 
   items.forEach(function (item) {
     var node = {};
-    var roleIndex = item.startsWith(TAG_START) ? -1 : item.indexOf('：');
+    var textItems = item.split('\n').filter(function (item) {
+      return !!item;
+    }); // handle id
 
-    if (roleIndex > 10 || item.slice(0, roleIndex).includes('\n')) {
+    if (textItems[0].startsWith(TagID)) {
+      var match = textItems[0].match(TAG_ID_REGEX);
+
+      if (match && match.index == 0) {
+        textItems[0] = textItems[0].slice(match[0].length);
+        node.id = getIdAndContentArrayFromText(match[0]).id;
+
+        if (!textItems[0]) {
+          textItems.splice(0, 1);
+        }
+      }
+    }
+
+    if (textItems.length == 0) {
+      return;
+    }
+
+    var roleIndex = textItems[0].startsWith(TAG_START) ? -1 : textItems[0].indexOf('：');
+
+    if (roleIndex > 10) {
       roleIndex = -1;
     }
 
-    node.role = roleIndex >= 0 ? item.slice(0, roleIndex) : ''; // lastRole = node.role;
+    node.role = roleIndex >= 0 ? textItems[0].slice(0, roleIndex) : ''; // lastRole = node.role;
 
-    var textItems = item.split('\n').filter(function (item) {
-      return !!item;
-    });
     var selectIndex = textItems.findIndex(function (i) {
-      return i.startsWith('1.') || i.startsWith(ChoiceStart);
+      return i.startsWith(ChoiceStart);
     });
     node.content = textItems.slice(0, selectIndex >= 0 ? selectIndex : textItems.length + 1).join('\n').slice(roleIndex >= 0 ? roleIndex + 1 : 0);
     var specialTag = Object.keys(TagToIMTypeMap).find(function (item) {
@@ -353,9 +376,16 @@ var getDotFromRawText = function getDotFromRawText(text, resources) {
   result.forEach(function (item, index) {
     var _getIdAndContentArray = getIdAndContentArrayFromText(item.content),
         id = _getIdAndContentArray.id,
-        contentArray = _getIdAndContentArray.contentArray;
+        contentArray = _getIdAndContentArray.contentArray; // 为之前的内容里带id兼容，后续改成 item.id = item.id || nanoid()
 
-    item.id = id || (0, _nanoid.nanoid)();
+
+    if (id) {
+      item.id = id;
+      item.content = item.content.replace(TagID + id + TagID, '');
+    } else {
+      item.id = item.id || (0, _nanoid.nanoid)();
+    }
+
     item.contentArray = contentArray;
 
     if (item.choices) {
@@ -430,13 +460,7 @@ var convertDotToRawText = function convertDotToRawText(dot) {
       text = specialTag + text;
     }
 
-    if ([IMType.singleChoice, IMType.fillBlank, IMType.takeVideoTLYY, IMType.videoCut, IMType.videoSort, IMType.videoAddAudio, IMType.videoAddMusic].some(function (item) {
-      return item == imType;
-    }) && !content.includes(id)) {
-      text += generateIdTag(id);
-    }
-
-    if ([IMType.singleChoice, IMType.steps].some(function (item) {
+    if ([IMType.singleChoice, IMType.multipleChoice, IMType.steps].some(function (item) {
       return item == imType;
     }) && arrayHasContent(choices)) {
       text += '\n' + choices.map(function (_ref4) {
@@ -446,7 +470,9 @@ var convertDotToRawText = function convertDotToRawText(dot) {
             hint = _ref4.hint,
             hintFake = _ref4.hintFake,
             right = _ref4.right;
-        return ChoiceStart + (contentArray ? convertContentArrayToRawContent(contentArray) : content) + (imType == IMType.singleChoice ? "".concat(TagID).concat(id).concat(TagID) : '') + (right ? RightChoiceTag : '') + (hint && !hintFake ? '\n' + hint : '');
+        return ChoiceStart + (contentArray ? convertContentArrayToRawContent(contentArray) : content) + ([IMType.singleChoice, IMType.multipleChoice].some(function (item) {
+          return item == imType;
+        }) ? generateIdTag(id) : '') + (right ? RightChoiceTag : '') + (hint && !hintFake ? '\n' + hint : '');
       }).join('\n');
     }
 
@@ -454,7 +480,7 @@ var convertDotToRawText = function convertDotToRawText(dot) {
       text += '\n' + FillBlankPlaceholderPrefix + placeholder;
     }
 
-    return (role ? role + '：' : '') + text;
+    return (id ? generateIdTag(id) + '\n' : '') + (role ? role + '：' : '') + text;
   }).join('\n\n');
 };
 
