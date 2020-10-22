@@ -3,3 +3,7 @@
 
 ### todo
 - 重构：每个imType提供parse和unparse
+
+
+### publish
+- npm run build, npm version xxxx, npm 

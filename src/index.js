@@ -58,7 +58,7 @@ export const IMType = {
 /**
  * 将text按tag拆分成数组
  */
-const parseContent = (content, list = []) => {
+export const parseContent = (content, list = []) => {
   if (!content) {
     return list;
   }
@@ -69,8 +69,6 @@ const parseContent = (content, list = []) => {
   }));
   tagIndexList.sort((a, b) => {
     if (a.index == -1 && b.index != -1) {
-      return 1;
-    } else if (a.index == -1 && b.index != -1) {
       return -1;
     }
     return a.index - b.index;

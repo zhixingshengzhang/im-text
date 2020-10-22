@@ -5,6 +5,7 @@ const {
   getDotFromRawText,
   convertDotToRawText,
   getMaterialIdsFromContent,
+  parseContent,
 } = require('./../src/index');
 const assertTextOK = (text) => {
   assert.strictEqual(text, convertDotToRawText(getDotFromRawText(text)));
@@ -13,6 +14,13 @@ describe('im-text', function () {
   it('steps', function () {
     assertTextOK('【ID】123【ID】\n小知：测试');
     assert.strictEqual(1, 1);
+  });
+  it('parseContent', function () {
+    // 视频 音频 =》 音频 视频
+    const contentArray = parseContent('【ID】2【ID】【视频】1【视频】')
+    assert.strictEqual(contentArray.length, 2)
+    assert.strictEqual(contentArray[0].type, 'ID')
+    assert.strictEqual(contentArray[1].type, 'video')
   });
   it('getMaterials', function () {
     const targetIds = ['1', '2', '3', '4'];
@@ -63,7 +71,7 @@ describe('im-text', function () {
 
   it('single choice with material', function () {
     let dot = getDotFromRawText(`小知：选择内容
-- 【音频】EwNfPoI7OJu-eGDYKqeqo【音频】
+- 【音频】EwNfPoI7OJu-eGDYKqeqo【音频】【ID】123【ID】
 - 【音频】EwNfPoI7OJu-eGDYKqeqo【音频】【正确】
 - 【音频】EwNfPoI7OJu-eGDYKqeqo【音频】
 错误解释3（可不填，会继承前面的错误解释）【粗】阿发【粗】
