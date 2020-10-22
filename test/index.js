@@ -6,6 +6,7 @@ const {
   convertDotToRawText,
   getMaterialIdsFromContent,
   parseContent,
+  getIdAndContentArrayFromText,
 } = require('./../src/index');
 const assertTextOK = (text) => {
   assert.strictEqual(text, convertDotToRawText(getDotFromRawText(text)));
@@ -21,6 +22,14 @@ describe('im-text', function () {
     assert.strictEqual(contentArray.length, 2)
     assert.strictEqual(contentArray[0].type, 'ID')
     assert.strictEqual(contentArray[1].type, 'video')
+  });
+  it('getIdAndContentArrayFromText', function () {
+    // 视频 音频 =》 音频 视频
+    const {id, contentArray} = getIdAndContentArrayFromText('【ID】2【ID】【视频】1【视频】', {1: {name: 'text'}})
+    assert.strictEqual(id, '2')
+    assert.strictEqual(contentArray.length, 1)
+    assert.strictEqual(contentArray[0].type, 'video')
+    assert.strictEqual(contentArray[0].material.name, 'text')
   });
   it('getMaterials', function () {
     const targetIds = ['1', '2', '3', '4'];
