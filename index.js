@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.formatContent = exports.TagNewLine = exports.TagUserName = exports.isMaterialType = exports.Tags = exports.convertDotToRawText = exports.getMaterialIdsFromContent = exports.getDotFromRawText = exports.parseContent = exports.IMType = exports.generateIdTag = exports.TagVideoAddMusic = exports.TagVideoAddAudio = exports.TagTakeVideoGuding = exports.TagTakeVideoJiang = exports.TagTakeVideoSheng = exports.TagTakeVideoGen = exports.TagTakeVideoShuai = exports.TagTakeVideoYi = exports.TagTakeVideoYao = exports.TagTakeVideoLa = exports.TagTakeVideoTui = exports.TagVideoSort = exports.TagVideoCut = exports.TagSubTitle = exports.TagMultipleChoice = exports.TagFillBlank = exports.FillBlankPlaceholderPrefix = exports.TagTask = exports.TagID = exports.TagSteps = exports.RightChoiceTag = exports.TAG_END = exports.TAG_ID_REGEX = exports.TAG_START = void 0;
+exports.formatContent = exports.TagNewLine = exports.TagUserName = exports.isMaterialType = exports.Tags = exports.convertDotToRawText = exports.getMaterialIdsFromContent = exports.getDotFromRawText = exports.getIdAndContentArrayFromText = exports.parseContent = exports.IMType = exports.generateIdTag = exports.TagVideoAddMusic = exports.TagVideoAddAudio = exports.TagTakeVideoGuding = exports.TagTakeVideoJiang = exports.TagTakeVideoSheng = exports.TagTakeVideoGen = exports.TagTakeVideoShuai = exports.TagTakeVideoYi = exports.TagTakeVideoYao = exports.TagTakeVideoLa = exports.TagTakeVideoTui = exports.TagVideoSort = exports.TagVideoCut = exports.TagSubTitle = exports.TagMultipleChoice = exports.TagFillBlank = exports.FillBlankPlaceholderPrefix = exports.TagTask = exports.TagID = exports.TagSteps = exports.RightChoiceTag = exports.TAG_END = exports.TAG_ID_REGEX = exports.TAG_START = void 0;
 
 var _nanoid = require("nanoid");
 
@@ -207,10 +207,15 @@ exports.parseContent = parseContent;
 var getIdAndContentArrayFromText = function getIdAndContentArrayFromText(text) {
   var _ids$;
 
+  var materialMap = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
   var list = parseContent(text);
   var contentArray = [];
   var ids = [];
   list.forEach(function (item) {
+    if (isMaterialType(item.type)) {
+      item.material = materialMap[item.content];
+    }
+
     if (item.type == 'ID') {
       ids.push(item);
     } else {
@@ -223,6 +228,7 @@ var getIdAndContentArrayFromText = function getIdAndContentArrayFromText(text) {
   };
 };
 
+exports.getIdAndContentArrayFromText = getIdAndContentArrayFromText;
 var TagToIMTypeMap = (_TagToIMTypeMap = {}, _defineProperty(_TagToIMTypeMap, TagSubTitle, IMType.subTitle), _defineProperty(_TagToIMTypeMap, TagSteps, IMType.steps), _defineProperty(_TagToIMTypeMap, TagMultipleChoice, IMType.multipleChoice), _defineProperty(_TagToIMTypeMap, TagFillBlank, IMType.fillBlank), _defineProperty(_TagToIMTypeMap, TagTask, IMType.task), _defineProperty(_TagToIMTypeMap, TagVideoCut, IMType.videoCut), _defineProperty(_TagToIMTypeMap, TagVideoSort, IMType.videoSort), _defineProperty(_TagToIMTypeMap, TagVideoAddAudio, IMType.videoAddAudio), _defineProperty(_TagToIMTypeMap, TagVideoAddMusic, IMType.videoAddMusic), _TagToIMTypeMap);
 
 var convertContentArrayToRawContent = function convertContentArrayToRawContent(contentArray) {
@@ -258,7 +264,7 @@ var getDotFromRawText = function getDotFromRawText(text, resources) {
 
       if (match && match.index == 0) {
         textItems[0] = textItems[0].slice(match[0].length);
-        node.id = getIdAndContentArrayFromText(match[0]).id;
+        node.id = getIdAndContentArrayFromText(match[0], resources).id;
 
         if (!textItems[0]) {
           textItems.splice(0, 1);
@@ -374,7 +380,7 @@ var getDotFromRawText = function getDotFromRawText(text, resources) {
   });
   var resourcesMap = keyBy(resources, 'id');
   result.forEach(function (item, index) {
-    var _getIdAndContentArray = getIdAndContentArrayFromText(item.content),
+    var _getIdAndContentArray = getIdAndContentArrayFromText(item.content, resourcesMap),
         id = _getIdAndContentArray.id,
         contentArray = _getIdAndContentArray.contentArray; // 为之前的内容里带id兼容，后续改成 item.id = item.id || nanoid()
 
@@ -390,13 +396,13 @@ var getDotFromRawText = function getDotFromRawText(text, resources) {
 
     if (item.choices) {
       item.choices.forEach(function (item, i) {
-        var _getIdAndContentArray2 = getIdAndContentArrayFromText(item.content),
+        var _getIdAndContentArray2 = getIdAndContentArrayFromText(item.content, resourcesMap),
             id = _getIdAndContentArray2.id,
             contentArray = _getIdAndContentArray2.contentArray;
 
         item.id = id || (0, _nanoid.nanoid)();
         item.contentArray = contentArray;
-        item.hintContentArray = getIdAndContentArrayFromText(item.hint).contentArray;
+        item.hintContentArray = getIdAndContentArrayFromText(item.hint, resourcesMap).contentArray;
       });
     }
 
