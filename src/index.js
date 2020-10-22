@@ -119,11 +119,14 @@ export const parseContent = (content, list = []) => {
     },
   ];
 };
-const getIdAndContentArrayFromText = (text) => {
+export const getIdAndContentArrayFromText = (text, materialMap = {}) => {
   const list = parseContent(text);
   const contentArray = [];
   const ids = [];
   list.forEach((item) => {
+    if (isMaterialType(item.type)) {
+      item.material = materialMap[item.content];
+    }
     if (item.type == 'ID') {
       ids.push(item);
     } else {
@@ -181,7 +184,7 @@ export const getDotFromRawText = (text, resources) => {
       const match = textItems[0].match(TAG_ID_REGEX);
       if (match && match.index == 0) {
         textItems[0] = textItems[0].slice(match[0].length);
-        node.id = getIdAndContentArrayFromText(match[0]).id;
+        node.id = getIdAndContentArrayFromText(match[0], resources).id;
         if (!textItems[0]) {
           textItems.splice(0, 1);
         }
@@ -303,7 +306,10 @@ export const getDotFromRawText = (text, resources) => {
   });
   const resourcesMap = keyBy(resources, 'id');
   result.forEach((item, index) => {
-    const { id, contentArray } = getIdAndContentArrayFromText(item.content);
+    const { id, contentArray } = getIdAndContentArrayFromText(
+      item.content,
+      resourcesMap
+    );
     // 为之前的内容里带id兼容，后续改成 item.id = item.id || nanoid()
     if (id) {
       item.id = id;
@@ -314,11 +320,15 @@ export const getDotFromRawText = (text, resources) => {
     item.contentArray = contentArray;
     if (item.choices) {
       item.choices.forEach((item, i) => {
-        const { id, contentArray } = getIdAndContentArrayFromText(item.content);
+        const { id, contentArray } = getIdAndContentArrayFromText(
+          item.content,
+          resourcesMap
+        );
         item.id = id || nanoid();
         item.contentArray = contentArray;
         item.hintContentArray = getIdAndContentArrayFromText(
-          item.hint
+          item.hint,
+          resourcesMap
         ).contentArray;
       });
     }
