@@ -211,9 +211,11 @@ var getIdAndContentArrayFromText = function getIdAndContentArrayFromText(text) {
   var list = parseContent(text);
   var contentArray = [];
   var ids = [];
+  var materialIds = new Set();
   list.forEach(function (item) {
     if (isMaterialType(item.type)) {
       item.material = materialMap[item.content];
+      materialIds.add(item.content);
     }
 
     if (item.type == 'ID') {
@@ -224,7 +226,8 @@ var getIdAndContentArrayFromText = function getIdAndContentArrayFromText(text) {
   });
   return {
     id: (_ids$ = ids[0]) === null || _ids$ === void 0 ? void 0 : _ids$.content,
-    contentArray: contentArray
+    contentArray: contentArray,
+    materialIds: _toConsumableArray(materialIds)
   };
 };
 
@@ -248,13 +251,20 @@ var convertContentArrayToRawContent = function convertContentArrayToRawContent(c
 var parseFillBlankFromText = function parseFillBlankFromText(text) {};
 
 var getDotFromRawText = function getDotFromRawText(text, resources) {
+  var _ref3 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+      _ref3$withRawText = _ref3.withRawText,
+      withRawText = _ref3$withRawText === void 0 ? false : _ref3$withRawText;
+
+  var resourcesMap = keyBy(resources, 'id');
   var items = text.trim().split(/[\n\n]{2,}/).filter(function (item) {
     return !!item;
   });
   var result = []; // let lastRole = '';
 
   items.forEach(function (item) {
-    var node = {};
+    var node = withRawText ? {
+      rawText: item
+    } : {};
     var textItems = item.split('\n').filter(function (item) {
       return !!item;
     }); // handle id
@@ -264,7 +274,7 @@ var getDotFromRawText = function getDotFromRawText(text, resources) {
 
       if (match && match.index == 0) {
         textItems[0] = textItems[0].slice(match[0].length);
-        node.id = getIdAndContentArrayFromText(match[0], resources).id;
+        node.id = getIdAndContentArrayFromText(match[0], resourcesMap).id;
 
         if (!textItems[0]) {
           textItems.splice(0, 1);
@@ -378,11 +388,13 @@ var getDotFromRawText = function getDotFromRawText(text, resources) {
 
     result.push(node);
   });
-  var resourcesMap = keyBy(resources, 'id');
   result.forEach(function (item, index) {
+    var itemMaterialIds = [];
+
     var _getIdAndContentArray = getIdAndContentArrayFromText(item.content, resourcesMap),
         id = _getIdAndContentArray.id,
-        contentArray = _getIdAndContentArray.contentArray; // 为之前的内容里带id兼容，后续改成 item.id = item.id || nanoid()
+        contentArray = _getIdAndContentArray.contentArray,
+        materialIds = _getIdAndContentArray.materialIds; // 为之前的内容里带id兼容，后续改成 item.id = item.id || nanoid()
 
 
     if (id) {
@@ -393,16 +405,25 @@ var getDotFromRawText = function getDotFromRawText(text, resources) {
     }
 
     item.contentArray = contentArray;
+    itemMaterialIds.push.apply(itemMaterialIds, _toConsumableArray(materialIds));
 
     if (item.choices) {
       item.choices.forEach(function (item, i) {
         var _getIdAndContentArray2 = getIdAndContentArrayFromText(item.content, resourcesMap),
             id = _getIdAndContentArray2.id,
-            contentArray = _getIdAndContentArray2.contentArray;
+            contentArray = _getIdAndContentArray2.contentArray,
+            choiceMaterialIds = _getIdAndContentArray2.materialIds;
 
+        itemMaterialIds.push.apply(itemMaterialIds, _toConsumableArray(choiceMaterialIds));
         item.id = id || (0, _nanoid.nanoid)();
         item.contentArray = contentArray;
-        item.hintContentArray = getIdAndContentArrayFromText(item.hint, resourcesMap).contentArray;
+
+        var _getIdAndContentArray3 = getIdAndContentArrayFromText(item.hint, resourcesMap),
+            hintContentArray = _getIdAndContentArray3.contentArray,
+            hintMaterialIds = _getIdAndContentArray3.materialIds;
+
+        item.hintContentArray = hintContentArray;
+        itemMaterialIds.push.apply(itemMaterialIds, _toConsumableArray(hintMaterialIds));
       });
     }
 
@@ -411,6 +432,7 @@ var getDotFromRawText = function getDotFromRawText(text, resources) {
         subItem.material = resourcesMap[subItem.content];
       }
     });
+    item.materialIds = _toConsumableArray(new Set(materialIds));
   });
   return {
     content: 'test',
@@ -450,13 +472,13 @@ var getMaterialIdsFromContent = function getMaterialIdsFromContent(text) {
 exports.getMaterialIdsFromContent = getMaterialIdsFromContent;
 
 var convertDotToRawText = function convertDotToRawText(dot) {
-  return dot.edges.map(function (_ref3) {
-    var id = _ref3.id,
-        role = _ref3.role,
-        content = _ref3.content,
-        choices = _ref3.choices,
-        imType = _ref3.imType,
-        placeholder = _ref3.placeholder;
+  return dot.edges.map(function (_ref4) {
+    var id = _ref4.id,
+        role = _ref4.role,
+        content = _ref4.content,
+        choices = _ref4.choices,
+        imType = _ref4.imType,
+        placeholder = _ref4.placeholder;
     var text = content;
     var specialTag = Object.keys(TagToIMTypeMap).find(function (item) {
       return TagToIMTypeMap[item] == imType;
@@ -469,13 +491,13 @@ var convertDotToRawText = function convertDotToRawText(dot) {
     if ([IMType.singleChoice, IMType.multipleChoice, IMType.steps].some(function (item) {
       return item == imType;
     }) && arrayHasContent(choices)) {
-      text += '\n' + choices.map(function (_ref4) {
-        var id = _ref4.id,
-            content = _ref4.content,
-            contentArray = _ref4.contentArray,
-            hint = _ref4.hint,
-            hintFake = _ref4.hintFake,
-            right = _ref4.right;
+      text += '\n' + choices.map(function (_ref5) {
+        var id = _ref5.id,
+            content = _ref5.content,
+            contentArray = _ref5.contentArray,
+            hint = _ref5.hint,
+            hintFake = _ref5.hintFake,
+            right = _ref5.right;
         return ChoiceStart + (contentArray ? convertContentArrayToRawContent(contentArray) : content) + ([IMType.singleChoice, IMType.multipleChoice].some(function (item) {
           return item == imType;
         }) ? generateIdTag(id) : '') + (right ? RightChoiceTag : '') + (hint && !hintFake ? '\n' + hint : '');
@@ -532,8 +554,8 @@ exports.TagNewLine = TagNewLine;
 var TagNewLineRegex = /【换行】/g;
 
 var formatContent = function formatContent(content) {
-  var _ref5 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-      getUserName = _ref5.getUserName;
+  var _ref6 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+      getUserName = _ref6.getUserName;
 
   var userName = (getUserName ? getUserName() : '') || '用户';
   return (content || '').replace(TagUserNameRegex, userName).replace(TagNewLineRegex, '\n');
