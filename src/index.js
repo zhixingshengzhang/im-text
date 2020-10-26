@@ -123,9 +123,11 @@ export const getIdAndContentArrayFromText = (text, materialMap = {}) => {
   const list = parseContent(text);
   const contentArray = [];
   const ids = [];
+  let materialIds = new Set();
   list.forEach((item) => {
     if (isMaterialType(item.type)) {
       item.material = materialMap[item.content];
+      materialIds.add(item.content);
     }
     if (item.type == 'ID') {
       ids.push(item);
@@ -136,6 +138,7 @@ export const getIdAndContentArrayFromText = (text, materialMap = {}) => {
   return {
     id: ids[0]?.content,
     contentArray,
+    materialIds: [...materialIds],
   };
 };
 const TagToIMTypeMap = {
@@ -169,7 +172,12 @@ const convertContentArrayToRawContent = (contentArray) => {
     .join('');
 };
 const parseFillBlankFromText = (text) => {};
-export const getDotFromRawText = (text, resources) => {
+export const getDotFromRawText = (
+  text,
+  resources,
+  { withRawText = false } = {}
+) => {
+  const resourcesMap = keyBy(resources, 'id');
   const items = text
     .trim()
     .split(/[\n\n]{2,}/)
@@ -177,14 +185,14 @@ export const getDotFromRawText = (text, resources) => {
   const result = [];
   // let lastRole = '';
   items.forEach((item) => {
-    let node = {};
+    let node = withRawText ? { rawText: item } : {};
     const textItems = item.split('\n').filter((item) => !!item);
     // handle id
     if (textItems[0].startsWith(TagID)) {
       const match = textItems[0].match(TAG_ID_REGEX);
       if (match && match.index == 0) {
         textItems[0] = textItems[0].slice(match[0].length);
-        node.id = getIdAndContentArrayFromText(match[0], resources).id;
+        node.id = getIdAndContentArrayFromText(match[0], resourcesMap).id;
         if (!textItems[0]) {
           textItems.splice(0, 1);
         }
@@ -304,9 +312,9 @@ export const getDotFromRawText = (text, resources) => {
     }
     result.push(node);
   });
-  const resourcesMap = keyBy(resources, 'id');
   result.forEach((item, index) => {
-    const { id, contentArray } = getIdAndContentArrayFromText(
+    const itemMaterialIds = [];
+    const { id, contentArray, materialIds } = getIdAndContentArrayFromText(
       item.content,
       resourcesMap
     );
@@ -318,18 +326,23 @@ export const getDotFromRawText = (text, resources) => {
       item.id = item.id || nanoid();
     }
     item.contentArray = contentArray;
+    itemMaterialIds.push(...materialIds);
     if (item.choices) {
       item.choices.forEach((item, i) => {
-        const { id, contentArray } = getIdAndContentArrayFromText(
-          item.content,
-          resourcesMap
-        );
+        const {
+          id,
+          contentArray,
+          materialIds: choiceMaterialIds,
+        } = getIdAndContentArrayFromText(item.content, resourcesMap);
+        itemMaterialIds.push(...choiceMaterialIds);
         item.id = id || nanoid();
         item.contentArray = contentArray;
-        item.hintContentArray = getIdAndContentArrayFromText(
-          item.hint,
-          resourcesMap
-        ).contentArray;
+        const {
+          contentArray: hintContentArray,
+          materialIds: hintMaterialIds,
+        } = getIdAndContentArrayFromText(item.hint, resourcesMap);
+        item.hintContentArray = hintContentArray;
+        itemMaterialIds.push(...hintMaterialIds);
       });
     }
     item.contentArray.forEach((subItem) => {
@@ -337,6 +350,7 @@ export const getDotFromRawText = (text, resources) => {
         subItem.material = resourcesMap[subItem.content];
       }
     });
+    item.materialIds = [...new Set(materialIds)];
   });
   return {
     content: 'test',
