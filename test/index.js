@@ -7,6 +7,7 @@ const {
   getMaterialIdsFromContent,
   parseContent,
   getIdAndContentArrayFromText,
+    IMType,
 } = require('./../src/index');
 const assertTextOK = (text) => {
   assert.strictEqual(text, convertDotToRawText(getDotFromRawText(text)));
@@ -105,4 +106,18 @@ describe('im-text', function () {
     let dot = getDotFromRawText(rawText, [], {withRawText: true} );
     assert.strictEqual(dot.edges[0].rawText , rawText)
   });
+
+  it('imType for singleImage and singleVideo', function () {
+    const rawText = `小知：123
+
+小知：【视频】1【视频】
+
+小知：【图片】2【图片】    
+`
+    let dot = getDotFromRawText(rawText, [], {withRawText: true} );
+    assert.strictEqual(dot.edges[0].imType , IMType.text)
+    assert.strictEqual(dot.edges[1].imType , IMType.singleVideo)
+    assert.strictEqual(dot.edges[2].imType , IMType.singleImage)
+  });
+
 });
