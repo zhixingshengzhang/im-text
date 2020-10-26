@@ -96,4 +96,13 @@ describe('im-text', function () {
 `);
     console.log('==========', convertDotToRawText(dot));
   });
+  it('with rawText', function () {
+    const rawText = `小知：【多选题】选择内容
+- 【粗】选项1【粗】阿斯顿发
+- 选项2【正确】
+- 选项3
+错误解释3（可不填，会继承前面的错误解释）【粗】阿发【粗】`
+    let dot = getDotFromRawText(rawText, [], {withRawText: true} );
+    assert.strictEqual(dot.edges[0].rawText , rawText)
+  });
 });
