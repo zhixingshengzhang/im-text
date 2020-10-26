@@ -43,6 +43,9 @@ export const TagVideoAddMusic = '【视频素材-音乐】';
 export const generateIdTag = (id) => TagID + (id || nanoid()) + TagID;
 const ChoiceStart = '- ';
 export const IMType = {
+  text: 'text', // 默认
+  singleImage: 'singleImage', //单张图片
+  singleVideo: 'singleVideo', // 单个视频
   singleChoice: 'singleChoice',
   multipleChoice: 'multipleChoice',
   fillBlank: 'fillBlank',
@@ -351,6 +354,16 @@ export const getDotFromRawText = (
       }
     });
     item.materialIds = [...new Set(materialIds)];
+    if (!item.imType) {
+      item.imType = IMType.text;
+      if (arrayHasContent(item.contentArray) && item.contentArray.length == 1) {
+        if (item.contentArray[0].type == MaterialType.image) {
+          item.imType = IMType.singleImage;
+        } else if (item.contentArray[0].type == MaterialType.video) {
+          item.imType = IMType.singleVideo;
+        }
+      }
+    }
   });
   return {
     content: 'test',

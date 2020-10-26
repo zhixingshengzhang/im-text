@@ -108,6 +108,12 @@ var generateIdTag = function generateIdTag(id) {
 exports.generateIdTag = generateIdTag;
 var ChoiceStart = '- ';
 var IMType = {
+  text: 'text',
+  // 默认
+  singleImage: 'singleImage',
+  //单张图片
+  singleVideo: 'singleVideo',
+  // 单个视频
   singleChoice: 'singleChoice',
   multipleChoice: 'multipleChoice',
   fillBlank: 'fillBlank',
@@ -433,6 +439,18 @@ var getDotFromRawText = function getDotFromRawText(text, resources) {
       }
     });
     item.materialIds = _toConsumableArray(new Set(materialIds));
+
+    if (!item.imType) {
+      item.imType = IMType.text;
+
+      if (arrayHasContent(item.contentArray) && item.contentArray.length == 1) {
+        if (item.contentArray[0].type == MaterialType.image) {
+          item.imType = IMType.singleImage;
+        } else if (item.contentArray[0].type == MaterialType.video) {
+          item.imType = IMType.singleVideo;
+        }
+      }
+    }
   });
   return {
     content: 'test',
