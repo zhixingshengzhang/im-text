@@ -174,7 +174,12 @@ const convertContentArrayToRawContent = (contentArray) => {
     })
     .join('');
 };
-const parseFillBlankFromText = (text) => {};
+/**
+ *
+ * @param text 对话体纯文本
+ * @param resources 素材列表
+ * @param withRawText 每个item是否返回rawText
+ */
 export const getDotFromRawText = (
   text,
   resources,
