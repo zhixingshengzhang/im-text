@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "gulp --gulpfile build/gulpfile.js",
+    "publish": "./publish.sh",
     "test": "mocha test/index.js --require @babel/register"
   },
   "repository": {
