@@ -2,8 +2,9 @@
 ### h5、server、im-extension共同使用
 
 ### todo
-- 重构：每个imType提供parse和unparse
+- [ ] 重构：每个imType自定义parser和unParser
 
 
-### publish
-- npm run build, npm version xxxx, npm 
+### 发布
+- 修改、提交
+- npm run publish
