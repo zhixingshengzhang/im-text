@@ -253,8 +253,13 @@ var convertContentArrayToRawContent = function convertContentArrayToRawContent(c
     return content;
   }).join('');
 };
+/**
+ *
+ * @param text 对话体纯文本
+ * @param resources 素材列表
+ * @param withRawText 每个item是否返回rawText
+ */
 
-var parseFillBlankFromText = function parseFillBlankFromText(text) {};
 
 var getDotFromRawText = function getDotFromRawText(text, resources) {
   var _ref3 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
