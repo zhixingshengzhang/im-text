@@ -34,8 +34,7 @@
       [
         "@babel/preset-env",
         {
-          "useBuiltIns": "usage",
-          "corejs": 2
+          "useBuiltIns": false
         }
       ]
     ]
