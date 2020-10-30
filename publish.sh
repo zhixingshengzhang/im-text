@@ -10,7 +10,9 @@ if [ -z "$commits" ];then
     exit 0
 fi
 npm run build
-git add -A && git commit -m "build"
+if [ -n "$(git status --porcelain)" ]; then
+    git add -A && git commit -m "build"
+fi
 git push
 npm version patch
 git push --tags
