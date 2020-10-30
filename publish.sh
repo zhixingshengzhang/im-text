@@ -15,5 +15,6 @@ if [ -n "$(git status --porcelain)" ]; then
 fi
 git push
 npm version patch
+git push
 git push --tags
 echo "请等待github actions完成"
