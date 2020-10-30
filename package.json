@@ -1,6 +1,6 @@
 {
   "name": "im-text",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "description": "对话体",
   "main": "index.js",
   "scripts": {
