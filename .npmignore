@@ -2,3 +2,6 @@ src/
 build/
 test/
 .github/
+publish.sh
+.gitignore
+rollup.config.js
