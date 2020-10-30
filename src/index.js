@@ -14,7 +14,7 @@ import {
   keyBy,
   MaterialType,
 } from './utils';
-import * as exports from './utils';
+
 const Loaders = [
   MultipleChoice,
   FillBlank,
