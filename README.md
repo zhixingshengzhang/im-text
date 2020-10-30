@@ -2,7 +2,7 @@
 ### h5、server、im-extension共同使用
 
 ### todo
-- [ ] 重构：每个imType自定义parser和unParser
+- [x] 重构：每个imType自定义parser和unParser
 
 
 ### 发布

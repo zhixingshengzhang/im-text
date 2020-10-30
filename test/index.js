@@ -7,8 +7,8 @@ const {
   getMaterialIdsFromContent,
   parseContent,
   getIdAndContentArrayFromText,
-    IMType,
-} = require('./../src/index');
+  IMType,
+} = require('../src/index');
 const assertTextOK = (text) => {
   assert.strictEqual(text, convertDotToRawText(getDotFromRawText(text)));
 };
@@ -19,18 +19,23 @@ describe('im-text', function () {
   });
   it('parseContent', function () {
     // 视频 音频 =》 音频 视频
-    const contentArray = parseContent('【ID】2【ID】【视频】1【视频】')
-    assert.strictEqual(contentArray.length, 2)
-    assert.strictEqual(contentArray[0].type, 'ID')
-    assert.strictEqual(contentArray[1].type, 'video')
+    const contentArray = parseContent('【ID】2【ID】【视频】1【视频】');
+    assert.strictEqual(contentArray.length, 2);
+    assert.strictEqual(contentArray[0].type, 'ID');
+    assert.strictEqual(contentArray[1].type, 'video');
   });
   it('getIdAndContentArrayFromText', function () {
     // 视频 音频 =》 音频 视频
-    const {id, contentArray} = getIdAndContentArrayFromText('【ID】2【ID】【视频】1【视频】', {1: {name: 'text'}})
-    assert.strictEqual(id, '2')
-    assert.strictEqual(contentArray.length, 1)
-    assert.strictEqual(contentArray[0].type, 'video')
-    assert.strictEqual(contentArray[0].material.name, 'text')
+    const { id, contentArray } = getIdAndContentArrayFromText(
+      '【ID】2【ID】【视频】1【视频】',
+      {
+        1: { name: 'text' },
+      }
+    );
+    assert.strictEqual(id, '2');
+    assert.strictEqual(contentArray.length, 1);
+    assert.strictEqual(contentArray[0].type, 'video');
+    assert.strictEqual(contentArray[0].material.name, 'text');
   });
   it('getMaterials', function () {
     const targetIds = ['1', '2', '3', '4'];
@@ -47,7 +52,6 @@ describe('im-text', function () {
   });
 
   it('bold inside choice', function () {
-    const targetIds = ['1', '2', '3', '4'];
     let dot = getDotFromRawText(`小知：选择内容
 - 【粗】选项1【粗】阿斯顿发
 错误解释1（可不填）
@@ -58,10 +62,8 @@ describe('im-text', function () {
 `);
     const text = convertDotToRawText(dot);
     assert.strictEqual(
-      getDotFromRawText(text).edges[0].choices[0].content.startsWith(
-        '【粗】选项1【粗】阿斯顿发'
-      ),
-      true
+      getDotFromRawText(text).edges[0].choices[0].contentArray.length,
+      2
     );
   });
 
@@ -102,9 +104,9 @@ describe('im-text', function () {
 - 【粗】选项1【粗】阿斯顿发
 - 选项2【正确】
 - 选项3
-错误解释3（可不填，会继承前面的错误解释）【粗】阿发【粗】`
-    let dot = getDotFromRawText(rawText, [], {withRawText: true} );
-    assert.strictEqual(dot.edges[0].rawText , rawText)
+错误解释3（可不填，会继承前面的错误解释）【粗】阿发【粗】`;
+    let dot = getDotFromRawText(rawText, [], { withRawText: true });
+    assert.strictEqual(dot.edges[0].rawText, rawText);
   });
 
   it('imType for singleImage and singleVideo', function () {
@@ -113,11 +115,10 @@ describe('im-text', function () {
 小知：【视频】1【视频】
 
 小知：【图片】2【图片】    
-`
-    let dot = getDotFromRawText(rawText, [], {withRawText: true} );
-    assert.strictEqual(dot.edges[0].imType , IMType.text)
-    assert.strictEqual(dot.edges[1].imType , IMType.singleVideo)
-    assert.strictEqual(dot.edges[2].imType , IMType.singleImage)
+`;
+    let dot = getDotFromRawText(rawText, [], { withRawText: true });
+    assert.strictEqual(dot.edges[0].imType, IMType.text);
+    assert.strictEqual(dot.edges[1].imType, IMType.singleVideo);
+    assert.strictEqual(dot.edges[2].imType, IMType.singleImage);
   });
-
 });

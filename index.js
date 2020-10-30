@@ -1,45 +1,269 @@
-"use strict";
+'use strict';Object.defineProperty(exports,'__esModule',{value:true});var crypto=require('crypto');function _interopDefaultLegacy(e){return e&&typeof e==='object'&&'default'in e?e:{'default':e}}var crypto__default=/*#__PURE__*/_interopDefaultLegacy(crypto);function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.formatContent = exports.TagNewLine = exports.TagUserName = exports.isMaterialType = exports.Tags = exports.convertDotToRawText = exports.getMaterialIdsFromContent = exports.getDotFromRawText = exports.getIdAndContentArrayFromText = exports.parseContent = exports.IMType = exports.generateIdTag = exports.TagVideoAddMusic = exports.TagVideoAddAudio = exports.TagTakeVideoGuding = exports.TagTakeVideoJiang = exports.TagTakeVideoSheng = exports.TagTakeVideoGen = exports.TagTakeVideoShuai = exports.TagTakeVideoYi = exports.TagTakeVideoYao = exports.TagTakeVideoLa = exports.TagTakeVideoTui = exports.TagVideoSort = exports.TagVideoCut = exports.TagSubTitle = exports.TagMultipleChoice = exports.TagFillBlank = exports.FillBlankPlaceholderPrefix = exports.TagTask = exports.TagID = exports.TagSteps = exports.RightChoiceTag = exports.TAG_END = exports.TAG_ID_REGEX = exports.TAG_START = void 0;
+function _defineProperties(target, props) {
+  for (var i = 0; i < props.length; i++) {
+    var descriptor = props[i];
+    descriptor.enumerable = descriptor.enumerable || false;
+    descriptor.configurable = true;
+    if ("value" in descriptor) descriptor.writable = true;
+    Object.defineProperty(target, descriptor.key, descriptor);
+  }
+}
 
-var _nanoid = require("nanoid");
+function _createClass(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties(Constructor, staticProps);
+  return Constructor;
+}
 
-var _TagToIMTypeMap;
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
 
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+  return obj;
+}
 
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function ownKeys(object, enumerableOnly) {
+  var keys = Object.keys(object);
 
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+  if (Object.getOwnPropertySymbols) {
+    var symbols = Object.getOwnPropertySymbols(object);
+    if (enumerableOnly) symbols = symbols.filter(function (sym) {
+      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
+    });
+    keys.push.apply(keys, symbols);
+  }
 
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+  return keys;
+}
 
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+function _objectSpread2(target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i] != null ? arguments[i] : {};
 
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+    if (i % 2) {
+      ownKeys(Object(source), true).forEach(function (key) {
+        _defineProperty(target, key, source[key]);
+      });
+    } else if (Object.getOwnPropertyDescriptors) {
+      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
+    } else {
+      ownKeys(Object(source)).forEach(function (key) {
+        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
+      });
+    }
+  }
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+  return target;
+}
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _inherits(subClass, superClass) {
+  if (typeof superClass !== "function" && superClass !== null) {
+    throw new TypeError("Super expression must either be null or a function");
+  }
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+  subClass.prototype = Object.create(superClass && superClass.prototype, {
+    constructor: {
+      value: subClass,
+      writable: true,
+      configurable: true
+    }
+  });
+  if (superClass) _setPrototypeOf(subClass, superClass);
+}
 
-var MaterialType = {
+function _getPrototypeOf(o) {
+  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
+    return o.__proto__ || Object.getPrototypeOf(o);
+  };
+  return _getPrototypeOf(o);
+}
+
+function _setPrototypeOf(o, p) {
+  _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
+    o.__proto__ = p;
+    return o;
+  };
+
+  return _setPrototypeOf(o, p);
+}
+
+function _isNativeReflectConstruct() {
+  if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+  if (Reflect.construct.sham) return false;
+  if (typeof Proxy === "function") return true;
+
+  try {
+    Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function _objectDestructuringEmpty(obj) {
+  if (obj == null) throw new TypeError("Cannot destructure undefined");
+}
+
+function _objectWithoutPropertiesLoose(source, excluded) {
+  if (source == null) return {};
+  var target = {};
+  var sourceKeys = Object.keys(source);
+  var key, i;
+
+  for (i = 0; i < sourceKeys.length; i++) {
+    key = sourceKeys[i];
+    if (excluded.indexOf(key) >= 0) continue;
+    target[key] = source[key];
+  }
+
+  return target;
+}
+
+function _objectWithoutProperties(source, excluded) {
+  if (source == null) return {};
+
+  var target = _objectWithoutPropertiesLoose(source, excluded);
+
+  var key, i;
+
+  if (Object.getOwnPropertySymbols) {
+    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
+
+    for (i = 0; i < sourceSymbolKeys.length; i++) {
+      key = sourceSymbolKeys[i];
+      if (excluded.indexOf(key) >= 0) continue;
+      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+      target[key] = source[key];
+    }
+  }
+
+  return target;
+}
+
+function _assertThisInitialized(self) {
+  if (self === void 0) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }
+
+  return self;
+}
+
+function _possibleConstructorReturn(self, call) {
+  if (call && (typeof call === "object" || typeof call === "function")) {
+    return call;
+  }
+
+  return _assertThisInitialized(self);
+}
+
+function _createSuper(Derived) {
+  var hasNativeReflectConstruct = _isNativeReflectConstruct();
+
+  return function _createSuperInternal() {
+    var Super = _getPrototypeOf(Derived),
+        result;
+
+    if (hasNativeReflectConstruct) {
+      var NewTarget = _getPrototypeOf(this).constructor;
+
+      result = Reflect.construct(Super, arguments, NewTarget);
+    } else {
+      result = Super.apply(this, arguments);
+    }
+
+    return _possibleConstructorReturn(this, result);
+  };
+}
+
+function _toConsumableArray(arr) {
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
+}
+
+function _arrayWithoutHoles(arr) {
+  if (Array.isArray(arr)) return _arrayLikeToArray(arr);
+}
+
+function _iterableToArray(iter) {
+  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
+}
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+}
+
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+
+  return arr2;
+}
+
+function _nonIterableSpread() {
+  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}// This alphabet uses `A-Za-z0-9_-` symbols. The genetic algorithm helped
+// optimize the gzip compression for this alphabet.
+let urlAlphabet = 'ModuleSymbhasOwnPr-0123456789ABCDEFGHNRVfgctiUvz_KqYTJkLxpZXIjQW';// for better performance.
+
+let buffers = {};
+
+let random = bytes => {
+  let buffer = buffers[bytes];
+
+  if (!buffer) {
+    // `Buffer.allocUnsafe()` is faster because it doesn’t flush the memory.
+    // Memory flushing is unnecessary since the buffer allocation itself resets
+    // the memory with the new bytes.
+    buffer = Buffer.allocUnsafe(bytes);
+    if (bytes <= 255) buffers[bytes] = buffer;
+  }
+
+  return crypto__default['default'].randomFillSync(buffer);
+};
+
+let nanoid = (size = 21) => {
+  let bytes = random(size);
+  let id = ''; // A compact alternative for `for (var i = 0; i < step; i++)`.
+
+  while (size--) {
+    // It is incorrect to use bytes exceeding the alphabet size.
+    // The following mask reduces the random byte in the 0-255 value
+    // range to the 0-63 value range. Therefore, adding hacks, such
+    // as empty string fallback or magic numbers, is unneccessary because
+    // the bitmask trims bytes down to the alphabet size.
+    id += urlAlphabet[bytes[size] & 63];
+  }
+
+  return id;
+};var MaterialType = {
   image: 'image',
   audio: 'audio',
   video: 'video'
 };
-
 var arrayHasContent = function arrayHasContent(array) {
   return Array.isArray(array) && array.length > 0;
 };
-
 var keyBy = function keyBy(items) {
   var key = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'id';
-  var keepItemReference = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+  var keepItemReference = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
   var result = {};
 
   if (!Array.isArray(items) || items.length == 0) {
@@ -47,71 +271,44 @@ var keyBy = function keyBy(items) {
   }
 
   items.forEach(function (item) {
-    result[item[key]] = keepItemReference ? item : _objectSpread({}, item);
+    result[item[key]] = keepItemReference ? item : _objectSpread2({}, item);
   });
   return result;
 };
-
 var TAG_START = '【';
-exports.TAG_START = TAG_START;
 var TAG_ID_REGEX = /【ID】[A-Za-z0-9_-]+【ID】/;
-exports.TAG_ID_REGEX = TAG_ID_REGEX;
+var TAG_ID_REGEX_G = /【ID】[A-Za-z0-9_-]+【ID】/g;
 var TAG_END = '】';
-exports.TAG_END = TAG_END;
 var RightChoiceTag = '【正确】';
-exports.RightChoiceTag = RightChoiceTag;
 var TagSteps = '【步骤】';
-exports.TagSteps = TagSteps;
 var TagID = '【ID】';
-exports.TagID = TagID;
 var TagTask = '【课后练习】';
-exports.TagTask = TagTask;
 var FillBlankPlaceholderPrefix = '提示文字：';
-exports.FillBlankPlaceholderPrefix = FillBlankPlaceholderPrefix;
 var TagFillBlank = '【填空题】';
-exports.TagFillBlank = TagFillBlank;
 var TagMultipleChoice = '【多选题】';
-exports.TagMultipleChoice = TagMultipleChoice;
 var TagSubTitle = '【小标题】';
-exports.TagSubTitle = TagSubTitle;
 var TagVideoCut = '【视频素材剪辑】';
-exports.TagVideoCut = TagVideoCut;
 var TagVideoSort = '【视频素材排序】';
-exports.TagVideoSort = TagVideoSort;
 var TagTakeVideoTui = '【拍视频-推】';
-exports.TagTakeVideoTui = TagTakeVideoTui;
 var TagTakeVideoLa = '【拍视频-拉】';
-exports.TagTakeVideoLa = TagTakeVideoLa;
 var TagTakeVideoYao = '【拍视频-摇】';
-exports.TagTakeVideoYao = TagTakeVideoYao;
 var TagTakeVideoYi = '【拍视频-移】';
-exports.TagTakeVideoYi = TagTakeVideoYi;
 var TagTakeVideoShuai = '【拍视频-甩】';
-exports.TagTakeVideoShuai = TagTakeVideoShuai;
 var TagTakeVideoGen = '【拍视频-跟】';
-exports.TagTakeVideoGen = TagTakeVideoGen;
 var TagTakeVideoSheng = '【拍视频-升】';
-exports.TagTakeVideoSheng = TagTakeVideoSheng;
 var TagTakeVideoJiang = '【拍视频-降】';
-exports.TagTakeVideoJiang = TagTakeVideoJiang;
 var TagTakeVideoGuding = '【拍视频-固定】';
-exports.TagTakeVideoGuding = TagTakeVideoGuding;
 var TagVideoAddAudio = '【视频素材-录音】';
-exports.TagVideoAddAudio = TagVideoAddAudio;
 var TagVideoAddMusic = '【视频素材-音乐】';
-exports.TagVideoAddMusic = TagVideoAddMusic;
-
 var generateIdTag = function generateIdTag(id) {
-  return TagID + (id || (0, _nanoid.nanoid)()) + TagID;
+  return TagID + (id || nanoid()) + TagID;
 };
-
-exports.generateIdTag = generateIdTag;
 var ChoiceStart = '- ';
 var IMType = {
   text: 'text',
   // 默认
   singleImage: 'singleImage',
-  //单张图片
+  //单张图片 singleImage和singleVideo本质上是text的特例
   singleVideo: 'singleVideo',
   // 单个视频
   singleChoice: 'singleChoice',
@@ -126,11 +323,46 @@ var IMType = {
   videoAddMusic: 'videoAddMusic',
   takeVideoTLYY: 'takeVideoTLYY'
 };
+var Tags = [{
+  tag: 'ID',
+  type: 'ID'
+}, {
+  tag: '粗',
+  type: 'bold'
+}, // 加粗
+{
+  tag: '斜',
+  type: 'italic'
+}, // 斜体
+{
+  tag: '文本样式',
+  type: 'textStyle'
+}, {
+  tag: '图片',
+  type: MaterialType.image
+}, {
+  tag: '音频',
+  type: MaterialType.audio
+}, {
+  tag: '视频',
+  type: MaterialType.video
+}];
+var convertContentArrayToRawContent = function convertContentArrayToRawContent(contentArray) {
+  var tagsMap = keyBy(Tags, 'type');
+  return contentArray.map(function (_ref) {
+    var content = _ref.content,
+        type = _ref.type;
+
+    if (tagsMap[type]) {
+      return TAG_START + tagsMap[type].tag + TAG_END + content + TAG_START + tagsMap[type].tag + TAG_END;
+    }
+
+    return content;
+  }).join('');
+};
 /**
  * 将text按tag拆分成数组
  */
-
-exports.IMType = IMType;
 
 var parseContent = function parseContent(content) {
   var list = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
@@ -139,9 +371,9 @@ var parseContent = function parseContent(content) {
     return list;
   }
 
-  var tagIndexList = Tags.map(function (_ref) {
-    var tag = _ref.tag,
-        type = _ref.type;
+  var tagIndexList = Tags.map(function (_ref2) {
+    var tag = _ref2.tag,
+        type = _ref2.type;
     return {
       tag: tag,
       type: type,
@@ -207,9 +439,6 @@ var parseContent = function parseContent(content) {
     content: content
   }]);
 };
-
-exports.parseContent = parseContent;
-
 var getIdAndContentArrayFromText = function getIdAndContentArrayFromText(text) {
   var _ids$;
 
@@ -236,112 +465,202 @@ var getIdAndContentArrayFromText = function getIdAndContentArrayFromText(text) {
     materialIds: _toConsumableArray(materialIds)
   };
 };
-
-exports.getIdAndContentArrayFromText = getIdAndContentArrayFromText;
-var TagToIMTypeMap = (_TagToIMTypeMap = {}, _defineProperty(_TagToIMTypeMap, TagSubTitle, IMType.subTitle), _defineProperty(_TagToIMTypeMap, TagSteps, IMType.steps), _defineProperty(_TagToIMTypeMap, TagMultipleChoice, IMType.multipleChoice), _defineProperty(_TagToIMTypeMap, TagFillBlank, IMType.fillBlank), _defineProperty(_TagToIMTypeMap, TagTask, IMType.task), _defineProperty(_TagToIMTypeMap, TagVideoCut, IMType.videoCut), _defineProperty(_TagToIMTypeMap, TagVideoSort, IMType.videoSort), _defineProperty(_TagToIMTypeMap, TagVideoAddAudio, IMType.videoAddAudio), _defineProperty(_TagToIMTypeMap, TagVideoAddMusic, IMType.videoAddMusic), _TagToIMTypeMap);
-
-var convertContentArrayToRawContent = function convertContentArrayToRawContent(contentArray) {
-  var tagsMap = keyBy(Tags, 'type');
-  return contentArray.map(function (_ref2) {
-    var content = _ref2.content,
-        type = _ref2.type;
-
-    if (tagsMap[type]) {
-      return TAG_START + tagsMap[type].tag + TAG_END + content + TAG_START + tagsMap[type].tag + TAG_END;
-    }
-
-    return content;
-  }).join('');
+var isMaterialType = function isMaterialType(type) {
+  return [MaterialType.image, MaterialType.audio, MaterialType.video].some(function (item) {
+    return item == type;
+  });
 };
-/**
- *
- * @param text 对话体纯文本
- * @param resources 素材列表
- * @param withRawText 每个item是否返回rawText
+var TagUserName = '【用户名】';
+var TagUserNameRegex = /【用户名】/g;
+var TagNewLine = '【换行】';
+var TagNewLineRegex = /【换行】/g;
+var formatContent = function formatContent(content) {
+  var _ref3 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+      getUserName = _ref3.getUserName;
+
+  var userName = (getUserName ? getUserName() : '') || '用户';
+  return (content || '').replace(TagUserNameRegex, userName).replace(TagNewLineRegex, '\n');
+};/**
+ * 基础类，
+ * - 校验的逻辑是遍历所有item的parse方法，因此parse方法需要考虑效率
  */
 
+var BaseItem = /*#__PURE__*/function () {
+  function BaseItem() {
+    _classCallCheck(this, BaseItem);
+  }
 
-var getDotFromRawText = function getDotFromRawText(text, resources) {
-  var _ref3 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
-      _ref3$withRawText = _ref3.withRawText,
-      withRawText = _ref3$withRawText === void 0 ? false : _ref3$withRawText;
+  _createClass(BaseItem, null, [{
+    key: "parse",
+    // 如果有值，代表内容必须以prefixTag开头才能命中
 
-  var resourcesMap = keyBy(resources, 'id');
-  var items = text.trim().split(/[\n\n]{2,}/).filter(function (item) {
-    return !!item;
-  });
-  var result = []; // let lastRole = '';
+    /**
+     *
+     * @param text
+     * @return null or object, null代表类型不满足
+     */
+    value: function parse(rawText, materialsMap) {
+      var _this = this;
 
-  items.forEach(function (item) {
-    var node = withRawText ? {
-      rawText: item
-    } : {};
-    var textItems = item.split('\n').filter(function (item) {
-      return !!item;
-    }); // handle id
+      var _ref = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+          withRawText = _ref.withRawText;
 
-    if (textItems[0].startsWith(TagID)) {
-      var match = textItems[0].match(TAG_ID_REGEX);
+      var node = {
+        materialIds: []
+      };
 
-      if (match && match.index == 0) {
-        textItems[0] = textItems[0].slice(match[0].length);
-        node.id = getIdAndContentArrayFromText(match[0], resourcesMap).id;
+      if (withRawText) {
+        node.rawText = rawText;
+      }
 
-        if (!textItems[0]) {
-          textItems.splice(0, 1);
+      var textItems = rawText.split('\n').filter(function (item) {
+        return !!item;
+      }); // 先简单过滤
+
+      if (this.prefixTag && !textItems.slice(0, 3).some(function (text) {
+        return text.includes(_this.prefixTag);
+      })) {
+        return null;
+      } // handle id
+
+
+      if (textItems[0].startsWith(TagID)) {
+        var match = textItems[0].match(TAG_ID_REGEX);
+
+        if (match && match.index == 0) {
+          textItems[0] = textItems[0].slice(match[0].length);
+          node.id = getIdAndContentArrayFromText(match[0], materialsMap).id;
+
+          if (!textItems[0]) {
+            textItems.splice(0, 1);
+          }
         }
       }
+
+      if (textItems.length == 0) {
+        return null;
+      }
+
+      node.id = node.id || nanoid();
+      var roleIndex = textItems[0].startsWith(TAG_START) ? -1 : textItems[0].indexOf('：');
+
+      if (roleIndex > 10) {
+        roleIndex = -1;
+      }
+
+      node.role = roleIndex >= 0 ? textItems[0].slice(0, roleIndex) : '';
+
+      if (roleIndex > 0) {
+        textItems[0] = textItems[0].slice(roleIndex + 1);
+      }
+
+      if (this.prefixTag && !textItems[0].startsWith(this.prefixTag)) {
+        return null;
+      }
+
+      textItems[0] = textItems[0].slice(this.prefixTag.length);
+      var info = this.parseContent(textItems, materialsMap);
+
+      if (!info) {
+        return null;
+      }
+
+      var content = info.content,
+          materialIds = info.materialIds,
+          extraProps = _objectWithoutProperties(info, ["content", "materialIds"]);
+
+      var _getIdAndContentArray = getIdAndContentArrayFromText(content, materialsMap),
+          contentArray = _getIdAndContentArray.contentArray,
+          contentMaterialIds = _getIdAndContentArray.materialIds;
+
+      return _objectSpread2(_objectSpread2(_objectSpread2({
+        imType: this.imType
+      }, node), extraProps), {}, {
+        contentArray: contentArray,
+        materialIds: [].concat(_toConsumableArray(materialIds || []), _toConsumableArray(contentMaterialIds))
+      });
     }
+    /**
+     *
+     * @param dot
+     * @return {string} text
+     */
 
-    if (textItems.length == 0) {
-      return;
+  }, {
+    key: "unParse",
+    value: function unParse(dot) {
+      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      var id = dot.id,
+          role = dot.role;
+      return (id ? generateIdTag(id) + '\n' : '') + (role ? role + '：' : '') + (this.prefixTag || '') + this.unParseContent(dot, options);
     }
+    /**
+     * @abstract
+     * 根据纯文本给dot填充信息
+     * @param text 已经将id和role除去
+     * @param  null or {content, materialIds, ...otherProps}
+     * null代表类型不满足, content代表主内容，materialIds代表解析其他属性时收集的materialIds
+     * @return
+     */
 
-    var roleIndex = textItems[0].startsWith(TAG_START) ? -1 : textItems[0].indexOf('：');
-
-    if (roleIndex > 10) {
-      roleIndex = -1;
+  }, {
+    key: "parseContent",
+    value: function parseContent(items, materialsMap) {
+      return {
+        content: items.join('\n'),
+        materialIds: []
+      };
     }
+    /**
+     * @abstract
+     * 将每个对话的内容转为纯文本
+     * 不包含id和role的逻辑
+     * @param dot
+     * @param options
+     * @return {string}
+     */
 
-    node.role = roleIndex >= 0 ? textItems[0].slice(0, roleIndex) : ''; // lastRole = node.role;
-
-    var selectIndex = textItems.findIndex(function (i) {
-      return i.startsWith(ChoiceStart);
-    });
-    node.content = textItems.slice(0, selectIndex >= 0 ? selectIndex : textItems.length + 1).join('\n').slice(roleIndex >= 0 ? roleIndex + 1 : 0);
-    var specialTag = Object.keys(TagToIMTypeMap).find(function (item) {
-      return node.content.startsWith(item);
-    });
-
-    if (specialTag) {
-      node.imType = TagToIMTypeMap[specialTag];
-      node.content = node.content.slice(specialTag.length);
-    } else if ([TagTakeVideoTui, TagTakeVideoLa, TagTakeVideoYao, TagTakeVideoYi, TagTakeVideoShuai, TagTakeVideoGen, TagTakeVideoSheng, TagTakeVideoJiang, TagTakeVideoGuding].some(function (item) {
-      return node.content.startsWith(item);
-    })) {
-      node.imType = IMType.takeVideoTLYY;
+  }, {
+    key: "unParseContent",
+    value: function unParseContent(dot) {
+      var contentArray = dot.contentArray;
+      return convertContentArrayToRawContent(contentArray);
     }
+    /**
+     * 对这种选项类型文字进行解析
+     *  - a
+     *  text1
+     *  - b
+     *  text2
+     * @param textItems
+     * @param materialsMap
+     * @param fakeHint 是否为没有hint的选项继承最近的其他选项
+     * @return {{materialIds: [string], choices: [{id, contentArray, hintContentArray, right}], textItems: [string]}}
+     * @private
+     */
 
-    if (node.imType == IMType.fillBlank) {
-      var contentList = node.content.split('\n').filter(function (item) {
-        return !!item;
+  }, {
+    key: "getChoices",
+    value: function getChoices(textItems, materialsMap) {
+      var _ref2 = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+          _ref2$fakeHint = _ref2.fakeHint,
+          fakeHint = _ref2$fakeHint === void 0 ? false : _ref2$fakeHint;
+
+      var selectIndex = textItems.findIndex(function (i) {
+        return i.startsWith(ChoiceStart);
       });
 
-      if (contentList.length > 1 && contentList[contentList.length - 1].startsWith(FillBlankPlaceholderPrefix)) {
-        node.placeholder = contentList[contentList.length - 1].slice(FillBlankPlaceholderPrefix.length);
-        node.content = contentList.slice(0, -1).join('\n');
+      if (selectIndex == -1) {
+        return {
+          choices: [],
+          materialIds: [],
+          textItems: textItems
+        };
       }
-    }
 
-    if (selectIndex >= 0) {
       var choices = [];
       textItems.slice(selectIndex).forEach(function (item) {
-        if (/^[0-9]\./.test(item)) {
-          choices.push({
-            content: item.slice(item.indexOf('.') + 1),
-            hintList: []
-          });
-        } else if (item.startsWith(ChoiceStart)) {
+        if (item.startsWith(ChoiceStart)) {
           choices.push({
             content: item.slice(ChoiceStart.length),
             hintList: []
@@ -362,109 +681,439 @@ var getDotFromRawText = function getDotFromRawText(text, resources) {
           item.content = item.content.replace(new RegExp(RightChoiceTag, 'g'), '');
         }
       });
-
-      if (choices.length > 0) {
-        if (!node.imType) {
-          node.imType = IMType.singleChoice; // 错误解释可以继承
-
-          choices.forEach(function (item, index) {
-            var hint = item.hint,
-                right = item.right;
-
-            if (!hint) {
-              var _hintArray$find, _hintArray$find2;
-
-              var hintArray = [].concat(_toConsumableArray(choices.slice(0, index).reverse()), _toConsumableArray(choices.slice(index + 1)));
-              var closestRight = (_hintArray$find = hintArray.find(function (item) {
-                return item.hint && item.right;
-              })) === null || _hintArray$find === void 0 ? void 0 : _hintArray$find.hint;
-              var closestWrong = (_hintArray$find2 = hintArray.find(function (item) {
-                return item.hint && !item.right;
-              })) === null || _hintArray$find2 === void 0 ? void 0 : _hintArray$find2.hint;
-
-              if (right) {
-                item.hint = closestRight || closestWrong;
-              } else {
-                item.hint = closestWrong || closestRight;
-              }
-
-              item.hintFake = true;
-            }
-          });
-        }
-
-        node.choices = choices;
-      }
-    }
-
-    result.push(node);
-  });
-  result.forEach(function (item, index) {
-    var itemMaterialIds = [];
-
-    var _getIdAndContentArray = getIdAndContentArrayFromText(item.content, resourcesMap),
-        id = _getIdAndContentArray.id,
-        contentArray = _getIdAndContentArray.contentArray,
-        materialIds = _getIdAndContentArray.materialIds; // 为之前的内容里带id兼容，后续改成 item.id = item.id || nanoid()
-
-
-    if (id) {
-      item.id = id;
-      item.content = item.content.replace(TagID + id + TagID, '');
-    } else {
-      item.id = item.id || (0, _nanoid.nanoid)();
-    }
-
-    item.contentArray = contentArray;
-    itemMaterialIds.push.apply(itemMaterialIds, _toConsumableArray(materialIds));
-
-    if (item.choices) {
-      item.choices.forEach(function (item, i) {
-        var _getIdAndContentArray2 = getIdAndContentArrayFromText(item.content, resourcesMap),
+      var materialIds = [];
+      choices.forEach(function (item, i) {
+        var _getIdAndContentArray2 = getIdAndContentArrayFromText(item.content, materialsMap),
             id = _getIdAndContentArray2.id,
             contentArray = _getIdAndContentArray2.contentArray,
             choiceMaterialIds = _getIdAndContentArray2.materialIds;
 
-        itemMaterialIds.push.apply(itemMaterialIds, _toConsumableArray(choiceMaterialIds));
-        item.id = id || (0, _nanoid.nanoid)();
+        materialIds.push.apply(materialIds, _toConsumableArray(choiceMaterialIds));
+        item.id = id || nanoid();
         item.contentArray = contentArray;
+        delete item.content;
 
-        var _getIdAndContentArray3 = getIdAndContentArrayFromText(item.hint, resourcesMap),
+        var _getIdAndContentArray3 = getIdAndContentArrayFromText(item.hint, materialsMap),
             hintContentArray = _getIdAndContentArray3.contentArray,
             hintMaterialIds = _getIdAndContentArray3.materialIds;
 
         item.hintContentArray = hintContentArray;
-        itemMaterialIds.push.apply(itemMaterialIds, _toConsumableArray(hintMaterialIds));
+        delete item.hint;
+        materialIds.push.apply(materialIds, _toConsumableArray(hintMaterialIds));
+      });
+
+      if (choices.length > 0 && fakeHint) {
+        choices.forEach(function (item, index) {
+          var hintContentArray = item.hintContentArray,
+              right = item.right;
+
+          if (!arrayHasContent(hintContentArray)) {
+            var _hintArray$find, _hintArray$find2;
+
+            var hintArray = [].concat(_toConsumableArray(choices.slice(0, index).reverse()), _toConsumableArray(choices.slice(index + 1)));
+            var closestRight = (_hintArray$find = hintArray.find(function (item) {
+              return arrayHasContent(item.hintContentArray) && item.right;
+            })) === null || _hintArray$find === void 0 ? void 0 : _hintArray$find.hintContentArray;
+            var closestWrong = (_hintArray$find2 = hintArray.find(function (item) {
+              return arrayHasContent(item.hintContentArray) && !item.right;
+            })) === null || _hintArray$find2 === void 0 ? void 0 : _hintArray$find2.hintContentArray;
+
+            if (right) {
+              item.hintContentArray = closestRight || closestWrong || [];
+            } else {
+              item.hintContentArray = closestWrong || closestRight || [];
+            }
+
+            item.hintFake = true;
+          }
+        });
+      }
+
+      return {
+        choices: choices,
+        materialIds: _toConsumableArray(new Set(materialIds)),
+        textItems: textItems.slice(0, selectIndex)
+      };
+    }
+    /**
+     * @param choices
+     * @param showItemId 每个choice是否需要id， 如Steps就不需要
+     */
+
+  }, {
+    key: "parseChoices",
+    value: function parseChoices(choices) {
+      var _ref3 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+          _ref3$showChoiceId = _ref3.showChoiceId,
+          showChoiceId = _ref3$showChoiceId === void 0 ? true : _ref3$showChoiceId;
+
+      if (!arrayHasContent(choices)) {
+        return '';
+      }
+
+      return choices.map(function (_ref4) {
+        var id = _ref4.id,
+            content = _ref4.content,
+            contentArray = _ref4.contentArray,
+            hintContentArray = _ref4.hintContentArray,
+            hintFake = _ref4.hintFake,
+            right = _ref4.right;
+        return ChoiceStart + (contentArray ? convertContentArrayToRawContent(contentArray) : content) + (showChoiceId ? generateIdTag(id) : '') + (right ? RightChoiceTag : '') + (arrayHasContent(hintContentArray) && !hintFake ? '\n' + convertContentArrayToRawContent(hintContentArray) : '');
+      }).join('\n');
+    }
+  }]);
+
+  return BaseItem;
+}();
+
+_defineProperty(BaseItem, "imType", '');
+
+_defineProperty(BaseItem, "prefixTag", '');var FillBlank = /*#__PURE__*/function (_BaseItem) {
+  _inherits(FillBlank, _BaseItem);
+
+  var _super = _createSuper(FillBlank);
+
+  function FillBlank() {
+    _classCallCheck(this, FillBlank);
+
+    return _super.apply(this, arguments);
+  }
+
+  _createClass(FillBlank, null, [{
+    key: "parseContent",
+    value: function parseContent(textItems, materialsMap) {
+      var placeholder = undefined;
+      var items = textItems;
+
+      if (textItems[textItems.length - 1].startsWith(FillBlankPlaceholderPrefix)) {
+        placeholder = textItems[textItems.length - 1].slice(FillBlankPlaceholderPrefix.length);
+        items = textItems.slice(0, -1);
+      }
+
+      return {
+        placeholder: placeholder,
+        content: items.join('\n')
+      };
+    }
+  }, {
+    key: "unParseContent",
+    value: function unParseContent(dot) {
+      var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+      _objectDestructuringEmpty(_ref);
+
+      var contentArray = dot.contentArray,
+          placeholder = dot.placeholder;
+      return convertContentArrayToRawContent(contentArray) + (placeholder ? '\n' + FillBlankPlaceholderPrefix + placeholder : '');
+    }
+  }]);
+
+  return FillBlank;
+}(BaseItem);
+
+_defineProperty(FillBlank, "imType", IMType.fillBlank);
+
+_defineProperty(FillBlank, "prefixTag", TagFillBlank);var SingleChoice = /*#__PURE__*/function (_BaseItem) {
+  _inherits(SingleChoice, _BaseItem);
+
+  var _super = _createSuper(SingleChoice);
+
+  function SingleChoice() {
+    _classCallCheck(this, SingleChoice);
+
+    return _super.apply(this, arguments);
+  }
+
+  _createClass(SingleChoice, null, [{
+    key: "parseContent",
+    value: function parseContent(oldTextItems, materialsMap) {
+      var _this$getChoices = this.getChoices(oldTextItems, materialsMap, {
+        fakeHint: true
+      }),
+          choices = _this$getChoices.choices,
+          textItems = _this$getChoices.textItems,
+          materialIds = _this$getChoices.materialIds;
+
+      if (choices.length == 0) {
+        return null;
+      }
+
+      return {
+        choices: choices,
+        materialIds: materialIds,
+        content: textItems.join('\n')
+      };
+    }
+  }, {
+    key: "unParseContent",
+    value: function unParseContent(dot) {
+      var contentArray = dot.contentArray,
+          choices = dot.choices;
+      return convertContentArrayToRawContent(contentArray) + '\n' + this.parseChoices(choices);
+    }
+  }]);
+
+  return SingleChoice;
+}(BaseItem);
+
+_defineProperty(SingleChoice, "imType", IMType.singleChoice);var MultipleChoice = /*#__PURE__*/function (_BaseItem) {
+  _inherits(MultipleChoice, _BaseItem);
+
+  var _super = _createSuper(MultipleChoice);
+
+  function MultipleChoice() {
+    _classCallCheck(this, MultipleChoice);
+
+    return _super.apply(this, arguments);
+  }
+
+  _createClass(MultipleChoice, null, [{
+    key: "parseContent",
+    value: function parseContent(oldTextItems, materialsMap) {
+      var _this$getChoices = this.getChoices(oldTextItems, materialsMap),
+          choices = _this$getChoices.choices,
+          textItems = _this$getChoices.textItems,
+          materialIds = _this$getChoices.materialIds;
+
+      if (choices.length == 0) {
+        return null;
+      }
+
+      return {
+        choices: choices,
+        materialIds: materialIds,
+        content: textItems.join('\n')
+      };
+    }
+  }, {
+    key: "unParseContent",
+    value: function unParseContent(dot) {
+      var contentArray = dot.contentArray,
+          choices = dot.choices;
+      return convertContentArrayToRawContent(contentArray) + '\n' + this.parseChoices(choices);
+    }
+  }]);
+
+  return MultipleChoice;
+}(BaseItem);
+
+_defineProperty(MultipleChoice, "imType", IMType.multipleChoice);
+
+_defineProperty(MultipleChoice, "prefixTag", TagMultipleChoice);var Steps = /*#__PURE__*/function (_BaseItem) {
+  _inherits(Steps, _BaseItem);
+
+  var _super = _createSuper(Steps);
+
+  function Steps() {
+    _classCallCheck(this, Steps);
+
+    return _super.apply(this, arguments);
+  }
+
+  _createClass(Steps, null, [{
+    key: "parseContent",
+    value: function parseContent(oldTextItems, materialsMap) {
+      var _this$getChoices = this.getChoices(oldTextItems, materialsMap),
+          choices = _this$getChoices.choices,
+          textItems = _this$getChoices.textItems,
+          materialIds = _this$getChoices.materialIds;
+
+      if (choices.length == 0) {
+        return null;
+      }
+
+      return {
+        choices: choices,
+        materialIds: materialIds,
+        content: textItems.join('\n')
+      };
+    }
+  }, {
+    key: "unParseContent",
+    value: function unParseContent(dot) {
+      var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+      _objectDestructuringEmpty(_ref);
+
+      var contentArray = dot.contentArray,
+          choices = dot.choices;
+      return convertContentArrayToRawContent(contentArray) + '\n' + this.parseChoices(choices, {
+        showChoiceId: false
       });
     }
+  }]);
 
-    item.contentArray.forEach(function (subItem) {
-      if (isMaterialType(subItem.type)) {
-        subItem.material = resourcesMap[subItem.content];
+  return Steps;
+}(BaseItem);
+
+_defineProperty(Steps, "imType", IMType.steps);
+
+_defineProperty(Steps, "prefixTag", TagSteps);var SubTitle = /*#__PURE__*/function (_BaseItem) {
+  _inherits(SubTitle, _BaseItem);
+
+  var _super = _createSuper(SubTitle);
+
+  function SubTitle() {
+    _classCallCheck(this, SubTitle);
+
+    return _super.apply(this, arguments);
+  }
+
+  return SubTitle;
+}(BaseItem);
+
+_defineProperty(SubTitle, "imType", IMType.subTitle);
+
+_defineProperty(SubTitle, "prefixTag", TagSubTitle);var _config;
+var config = (_config = {}, _defineProperty(_config, TagTakeVideoTui, 'tui'), _defineProperty(_config, TagTakeVideoLa, 'la'), _defineProperty(_config, TagTakeVideoYao, 'yao'), _defineProperty(_config, TagTakeVideoYi, 'yi'), _defineProperty(_config, TagTakeVideoGen, 'gen'), _defineProperty(_config, TagTakeVideoShuai, 'shuai'), _defineProperty(_config, TagTakeVideoSheng, 'sheng'), _defineProperty(_config, TagTakeVideoJiang, 'jiang'), _defineProperty(_config, TagTakeVideoGuding, 'guding'), _config);
+/**
+ * 拍视频组件：推拉摇移
+ */
+
+var TakeVideoTLYY = /*#__PURE__*/function (_BaseItem) {
+  _inherits(TakeVideoTLYY, _BaseItem);
+
+  var _super = _createSuper(TakeVideoTLYY);
+
+  function TakeVideoTLYY() {
+    _classCallCheck(this, TakeVideoTLYY);
+
+    return _super.apply(this, arguments);
+  }
+
+  _createClass(TakeVideoTLYY, null, [{
+    key: "parseContent",
+    value: function parseContent(items) {
+      _objectDestructuringEmpty(items);
+
+      var key = Object.keys(config).find(function (item) {
+        return items[0].startsWith(item);
+      });
+
+      if (!key) {
+        return null;
       }
-    });
-    item.materialIds = _toConsumableArray(new Set(materialIds));
 
-    if (!item.imType) {
-      item.imType = IMType.text;
+      return {
+        tlyyType: config[key],
+        content: items.join('\n').slice(key.length)
+      };
+    }
+  }, {
+    key: "unParseContent",
+    value: function unParseContent(dot) {
+      var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-      if (arrayHasContent(item.contentArray) && item.contentArray.length == 1) {
-        if (item.contentArray[0].type == MaterialType.image) {
-          item.imType = IMType.singleImage;
-        } else if (item.contentArray[0].type == MaterialType.video) {
-          item.imType = IMType.singleVideo;
+      _objectDestructuringEmpty(_ref);
+
+      var contentArray = dot.contentArray,
+          tlyyType = dot.tlyyType;
+      return Object.keys(config).find(function (key) {
+        return config[key] == tlyyType;
+      }) + convertContentArrayToRawContent(contentArray);
+    }
+  }]);
+
+  return TakeVideoTLYY;
+}(BaseItem);
+
+_defineProperty(TakeVideoTLYY, "imType", IMType.takeVideoTLYY);var VideoSort = /*#__PURE__*/function (_BaseItem) {
+  _inherits(VideoSort, _BaseItem);
+
+  var _super = _createSuper(VideoSort);
+
+  function VideoSort() {
+    _classCallCheck(this, VideoSort);
+
+    return _super.apply(this, arguments);
+  }
+
+  return VideoSort;
+}(BaseItem);
+
+_defineProperty(VideoSort, "imType", IMType.videoSort);
+
+_defineProperty(VideoSort, "prefixTag", TagVideoSort);var VideoCut = /*#__PURE__*/function (_BaseItem) {
+  _inherits(VideoCut, _BaseItem);
+
+  var _super = _createSuper(VideoCut);
+
+  function VideoCut() {
+    _classCallCheck(this, VideoCut);
+
+    return _super.apply(this, arguments);
+  }
+
+  return VideoCut;
+}(BaseItem);
+
+_defineProperty(VideoCut, "imType", IMType.videoCut);
+
+_defineProperty(VideoCut, "prefixTag", TagVideoCut);var SingleChoice$1 = /*#__PURE__*/function (_BaseItem) {
+  _inherits(SingleChoice, _BaseItem);
+
+  var _super = _createSuper(SingleChoice);
+
+  function SingleChoice() {
+    _classCallCheck(this, SingleChoice);
+
+    return _super.apply(this, arguments);
+  }
+
+  return SingleChoice;
+}(BaseItem);
+
+_defineProperty(SingleChoice$1, "imType", IMType.text);var Loaders = [MultipleChoice, FillBlank, Steps, SubTitle, TakeVideoTLYY, VideoCut, VideoSort, // 目前单选题没有特殊标记，因此排序在最后
+SingleChoice, SingleChoice$1];
+var convertDotToRawText = function convertDotToRawText(dot) {
+  var loadersMap = keyBy(Loaders, 'imType');
+  return dot.edges.map(function (item) {
+    return (loadersMap[item.imType] || SingleChoice$1).unParse(item);
+  }).join('\n\n');
+};
+/**
+ *
+ * @param text 对话体纯文本
+ * @param materials 素材列表
+ * @param withRawText 每个item是否返回rawText
+ */
+
+var getDotFromRawText = function getDotFromRawText(text, materials) {
+  var _ref = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {},
+      _ref$withRawText = _ref.withRawText,
+      withRawText = _ref$withRawText === void 0 ? false : _ref$withRawText;
+
+  var materialsMap = keyBy(materials, 'id');
+  var textItems = text.trim().split(/[\n\n]{2,}/).filter(function (item) {
+    return !!item;
+  });
+  var nodes = [];
+  textItems.forEach(function (textItem) {
+    for (var i = 0; i < Loaders.length; i++) {
+      var dot = Loaders[i].parse(textItem, materialsMap, {
+        withRawText: withRawText
+      });
+
+      if (dot) {
+        nodes.push(dot); // 处理text的两个特殊形态：singleImage和singleVideo
+
+        if ((!dot.imType || dot.imType == IMType.text) && arrayHasContent(dot.contentArray) && dot.contentArray.length == 1) {
+          if (dot.contentArray[0].type == MaterialType.image) {
+            dot.imType = IMType.singleImage;
+          } else if (dot.contentArray[0].type == MaterialType.video) {
+            dot.imType = IMType.singleVideo;
+          }
         }
+
+        return;
       }
     }
   });
   return {
     content: 'test',
-    edges: result
+    edges: nodes
   };
 };
-
-exports.getDotFromRawText = getDotFromRawText;
-
 var getMaterialIdsFromContent = function getMaterialIdsFromContent(text) {
   var dot = getDotFromRawText(text, {});
   var ids = new Set();
@@ -490,98 +1139,4 @@ var getMaterialIdsFromContent = function getMaterialIdsFromContent(text) {
     }
   });
   return _toConsumableArray(ids);
-};
-
-exports.getMaterialIdsFromContent = getMaterialIdsFromContent;
-
-var convertDotToRawText = function convertDotToRawText(dot) {
-  return dot.edges.map(function (_ref4) {
-    var id = _ref4.id,
-        role = _ref4.role,
-        content = _ref4.content,
-        choices = _ref4.choices,
-        imType = _ref4.imType,
-        placeholder = _ref4.placeholder;
-    var text = content;
-    var specialTag = Object.keys(TagToIMTypeMap).find(function (item) {
-      return TagToIMTypeMap[item] == imType;
-    });
-
-    if (specialTag) {
-      text = specialTag + text;
-    }
-
-    if ([IMType.singleChoice, IMType.multipleChoice, IMType.steps].some(function (item) {
-      return item == imType;
-    }) && arrayHasContent(choices)) {
-      text += '\n' + choices.map(function (_ref5) {
-        var id = _ref5.id,
-            content = _ref5.content,
-            contentArray = _ref5.contentArray,
-            hint = _ref5.hint,
-            hintFake = _ref5.hintFake,
-            right = _ref5.right;
-        return ChoiceStart + (contentArray ? convertContentArrayToRawContent(contentArray) : content) + ([IMType.singleChoice, IMType.multipleChoice].some(function (item) {
-          return item == imType;
-        }) ? generateIdTag(id) : '') + (right ? RightChoiceTag : '') + (hint && !hintFake ? '\n' + hint : '');
-      }).join('\n');
-    }
-
-    if (imType == IMType.fillBlank && placeholder) {
-      text += '\n' + FillBlankPlaceholderPrefix + placeholder;
-    }
-
-    return (id ? generateIdTag(id) + '\n' : '') + (role ? role + '：' : '') + text;
-  }).join('\n\n');
-};
-
-exports.convertDotToRawText = convertDotToRawText;
-var Tags = [{
-  tag: 'ID',
-  type: 'ID'
-}, {
-  tag: '粗',
-  type: 'bold'
-}, // 加粗
-{
-  tag: '斜',
-  type: 'italic'
-}, // 斜体
-{
-  tag: '文本样式',
-  type: 'textStyle'
-}, {
-  tag: '图片',
-  type: MaterialType.image
-}, {
-  tag: '音频',
-  type: MaterialType.audio
-}, {
-  tag: '视频',
-  type: MaterialType.video
-}];
-exports.Tags = Tags;
-
-var isMaterialType = function isMaterialType(type) {
-  return [MaterialType.image, MaterialType.audio, MaterialType.video].some(function (item) {
-    return item == type;
-  });
-};
-
-exports.isMaterialType = isMaterialType;
-var TagUserName = '【用户名】';
-exports.TagUserName = TagUserName;
-var TagUserNameRegex = /【用户名】/g;
-var TagNewLine = '【换行】';
-exports.TagNewLine = TagNewLine;
-var TagNewLineRegex = /【换行】/g;
-
-var formatContent = function formatContent(content) {
-  var _ref6 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-      getUserName = _ref6.getUserName;
-
-  var userName = (getUserName ? getUserName() : '') || '用户';
-  return (content || '').replace(TagUserNameRegex, userName).replace(TagNewLineRegex, '\n');
-};
-
-exports.formatContent = formatContent;
+};exports.ChoiceStart=ChoiceStart;exports.FillBlankPlaceholderPrefix=FillBlankPlaceholderPrefix;exports.IMType=IMType;exports.MaterialType=MaterialType;exports.RightChoiceTag=RightChoiceTag;exports.TAG_END=TAG_END;exports.TAG_ID_REGEX=TAG_ID_REGEX;exports.TAG_ID_REGEX_G=TAG_ID_REGEX_G;exports.TAG_START=TAG_START;exports.TagFillBlank=TagFillBlank;exports.TagID=TagID;exports.TagMultipleChoice=TagMultipleChoice;exports.TagNewLine=TagNewLine;exports.TagSteps=TagSteps;exports.TagSubTitle=TagSubTitle;exports.TagTakeVideoGen=TagTakeVideoGen;exports.TagTakeVideoGuding=TagTakeVideoGuding;exports.TagTakeVideoJiang=TagTakeVideoJiang;exports.TagTakeVideoLa=TagTakeVideoLa;exports.TagTakeVideoSheng=TagTakeVideoSheng;exports.TagTakeVideoShuai=TagTakeVideoShuai;exports.TagTakeVideoTui=TagTakeVideoTui;exports.TagTakeVideoYao=TagTakeVideoYao;exports.TagTakeVideoYi=TagTakeVideoYi;exports.TagTask=TagTask;exports.TagUserName=TagUserName;exports.TagVideoAddAudio=TagVideoAddAudio;exports.TagVideoAddMusic=TagVideoAddMusic;exports.TagVideoCut=TagVideoCut;exports.TagVideoSort=TagVideoSort;exports.Tags=Tags;exports.arrayHasContent=arrayHasContent;exports.convertContentArrayToRawContent=convertContentArrayToRawContent;exports.convertDotToRawText=convertDotToRawText;exports.formatContent=formatContent;exports.generateIdTag=generateIdTag;exports.getDotFromRawText=getDotFromRawText;exports.getIdAndContentArrayFromText=getIdAndContentArrayFromText;exports.getMaterialIdsFromContent=getMaterialIdsFromContent;exports.isMaterialType=isMaterialType;exports.keyBy=keyBy;exports.parseContent=parseContent;
