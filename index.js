@@ -1063,7 +1063,39 @@ _defineProperty(VideoCut, "prefixTag", TagVideoCut);var SingleChoice$1 = /*#__PU
   return SingleChoice;
 }(BaseItem);
 
-_defineProperty(SingleChoice$1, "imType", IMType.text);var Loaders = [MultipleChoice, FillBlank, Steps, SubTitle, TakeVideoTLYY, VideoCut, VideoSort, // 目前单选题没有特殊标记，因此排序在最后
+_defineProperty(SingleChoice$1, "imType", IMType.text);var VideoAddMusic = /*#__PURE__*/function (_BaseItem) {
+  _inherits(VideoAddMusic, _BaseItem);
+
+  var _super = _createSuper(VideoAddMusic);
+
+  function VideoAddMusic() {
+    _classCallCheck(this, VideoAddMusic);
+
+    return _super.apply(this, arguments);
+  }
+
+  return VideoAddMusic;
+}(BaseItem);
+
+_defineProperty(VideoAddMusic, "imType", IMType.videoAddMusic);
+
+_defineProperty(VideoAddMusic, "prefixTag", TagVideoAddMusic);var VideoAddAudio = /*#__PURE__*/function (_BaseItem) {
+  _inherits(VideoAddAudio, _BaseItem);
+
+  var _super = _createSuper(VideoAddAudio);
+
+  function VideoAddAudio() {
+    _classCallCheck(this, VideoAddAudio);
+
+    return _super.apply(this, arguments);
+  }
+
+  return VideoAddAudio;
+}(BaseItem);
+
+_defineProperty(VideoAddAudio, "imType", IMType.videoAddAudio);
+
+_defineProperty(VideoAddAudio, "prefixTag", TagVideoAddAudio);var Loaders = [MultipleChoice, FillBlank, Steps, SubTitle, TakeVideoTLYY, VideoCut, VideoSort, VideoAddMusic, VideoAddAudio, // 目前单选题没有特殊标记，因此排序在最后
 SingleChoice, SingleChoice$1];
 var convertDotToRawText = function convertDotToRawText(dot) {
   var loadersMap = keyBy(Loaders, 'imType');

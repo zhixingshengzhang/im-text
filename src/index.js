@@ -14,6 +14,8 @@ import {
   keyBy,
   MaterialType,
 } from './utils';
+import VideoAddMusic from './loaders/VideoAddMusic';
+import VideoAddAudio from './loaders/VideoAddAudio';
 
 const Loaders = [
   MultipleChoice,
@@ -23,6 +25,8 @@ const Loaders = [
   TakeVideoTLYY,
   VideoCut,
   VideoSort,
+  VideoAddMusic,
+  VideoAddAudio,
   // 目前单选题没有特殊标记，因此排序在最后
   SingleChoice,
   LoaderText,

@@ -40,6 +40,8 @@ export const TagTakeVideoGen = '【拍视频-跟】';
 export const TagTakeVideoSheng = '【拍视频-升】';
 export const TagTakeVideoJiang = '【拍视频-降】';
 export const TagTakeVideoGuding = '【拍视频-固定】';
+export const TagVideoAddAudio = '【视频素材-录音】';
+export const TagVideoAddMusic = '【视频素材-音乐】';
 export const generateIdTag = (id) => TagID + (id || nanoid()) + TagID;
 export const ChoiceStart = '- ';
 export const IMType = {
