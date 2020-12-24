@@ -300,6 +300,8 @@ var TagTakeVideoJiang = '【拍视频-降】';
 var TagTakeVideoGuding = '【拍视频-固定】';
 var TagVideoAddAudio = '【视频素材-录音】';
 var TagVideoAddMusic = '【视频素材-音乐】';
+var TagChapterSection = '【本周关卡导航】';
+var TagCatalog = '【目录】';
 var generateIdTag = function generateIdTag(id) {
   return TagID + (id || nanoid()) + TagID;
 };
@@ -321,7 +323,9 @@ var IMType = {
   videoSort: 'videoSort',
   videoAddAudio: 'videoAddAudio',
   videoAddMusic: 'videoAddMusic',
-  takeVideoTLYY: 'takeVideoTLYY'
+  takeVideoTLYY: 'takeVideoTLYY',
+  chapterSections: 'chapterSections',
+  catalog: 'catalog'
 };
 var Tags = [{
   tag: 'ID',
@@ -1063,7 +1067,55 @@ _defineProperty(VideoCut, "prefixTag", TagVideoCut);var SingleChoice$1 = /*#__PU
   return SingleChoice;
 }(BaseItem);
 
-_defineProperty(SingleChoice$1, "imType", IMType.text);var VideoAddMusic = /*#__PURE__*/function (_BaseItem) {
+_defineProperty(SingleChoice$1, "imType", IMType.text);/**
+ * 本周关卡导航
+ * 【本周关卡导航】
+ * 【本周关卡导航】全部
+ * 【本周关卡导航】下一关
+ * 【本周关卡导航】本关
+ */
+
+var ChapterSections = /*#__PURE__*/function (_BaseItem) {
+  _inherits(ChapterSections, _BaseItem);
+
+  var _super = _createSuper(ChapterSections);
+
+  function ChapterSections() {
+    _classCallCheck(this, ChapterSections);
+
+    return _super.apply(this, arguments);
+  }
+
+  return ChapterSections;
+}(BaseItem);
+
+_defineProperty(ChapterSections, "imType", IMType.chapterSections);
+
+_defineProperty(ChapterSections, "prefixTag", TagChapterSection);/**
+ * 目录
+ * 【目录】
+ * 【目录】1
+ * 【目录】1-1
+ * 【目录】1-1-1
+ */
+
+var Catalog = /*#__PURE__*/function (_BaseItem) {
+  _inherits(Catalog, _BaseItem);
+
+  var _super = _createSuper(Catalog);
+
+  function Catalog() {
+    _classCallCheck(this, Catalog);
+
+    return _super.apply(this, arguments);
+  }
+
+  return Catalog;
+}(BaseItem);
+
+_defineProperty(Catalog, "imType", IMType.catalog);
+
+_defineProperty(Catalog, "prefixTag", TagCatalog);var VideoAddMusic = /*#__PURE__*/function (_BaseItem) {
   _inherits(VideoAddMusic, _BaseItem);
 
   var _super = _createSuper(VideoAddMusic);
@@ -1095,7 +1147,7 @@ _defineProperty(VideoAddMusic, "prefixTag", TagVideoAddMusic);var VideoAddAudio 
 
 _defineProperty(VideoAddAudio, "imType", IMType.videoAddAudio);
 
-_defineProperty(VideoAddAudio, "prefixTag", TagVideoAddAudio);var Loaders = [MultipleChoice, FillBlank, Steps, SubTitle, TakeVideoTLYY, VideoCut, VideoSort, VideoAddMusic, VideoAddAudio, // 目前单选题没有特殊标记，因此排序在最后
+_defineProperty(VideoAddAudio, "prefixTag", TagVideoAddAudio);var Loaders = [MultipleChoice, FillBlank, Steps, SubTitle, TakeVideoTLYY, VideoCut, VideoSort, VideoAddMusic, VideoAddAudio, ChapterSections, Catalog, // 目前单选题没有特殊标记，因此排序在最后
 SingleChoice, SingleChoice$1];
 var convertDotToRawText = function convertDotToRawText(dot) {
   var loadersMap = keyBy(Loaders, 'imType');
@@ -1171,4 +1223,4 @@ var getMaterialIdsFromContent = function getMaterialIdsFromContent(text) {
     }
   });
   return _toConsumableArray(ids);
-};exports.ChoiceStart=ChoiceStart;exports.FillBlankPlaceholderPrefix=FillBlankPlaceholderPrefix;exports.IMType=IMType;exports.MaterialType=MaterialType;exports.RightChoiceTag=RightChoiceTag;exports.TAG_END=TAG_END;exports.TAG_ID_REGEX=TAG_ID_REGEX;exports.TAG_ID_REGEX_G=TAG_ID_REGEX_G;exports.TAG_START=TAG_START;exports.TagFillBlank=TagFillBlank;exports.TagID=TagID;exports.TagMultipleChoice=TagMultipleChoice;exports.TagNewLine=TagNewLine;exports.TagSteps=TagSteps;exports.TagSubTitle=TagSubTitle;exports.TagTakeVideoGen=TagTakeVideoGen;exports.TagTakeVideoGuding=TagTakeVideoGuding;exports.TagTakeVideoJiang=TagTakeVideoJiang;exports.TagTakeVideoLa=TagTakeVideoLa;exports.TagTakeVideoSheng=TagTakeVideoSheng;exports.TagTakeVideoShuai=TagTakeVideoShuai;exports.TagTakeVideoTui=TagTakeVideoTui;exports.TagTakeVideoYao=TagTakeVideoYao;exports.TagTakeVideoYi=TagTakeVideoYi;exports.TagTask=TagTask;exports.TagUserName=TagUserName;exports.TagVideoAddAudio=TagVideoAddAudio;exports.TagVideoAddMusic=TagVideoAddMusic;exports.TagVideoCut=TagVideoCut;exports.TagVideoSort=TagVideoSort;exports.Tags=Tags;exports.arrayHasContent=arrayHasContent;exports.convertContentArrayToRawContent=convertContentArrayToRawContent;exports.convertDotToRawText=convertDotToRawText;exports.formatContent=formatContent;exports.generateIdTag=generateIdTag;exports.getDotFromRawText=getDotFromRawText;exports.getIdAndContentArrayFromText=getIdAndContentArrayFromText;exports.getMaterialIdsFromContent=getMaterialIdsFromContent;exports.isMaterialType=isMaterialType;exports.keyBy=keyBy;exports.parseContent=parseContent;
+};exports.ChoiceStart=ChoiceStart;exports.FillBlankPlaceholderPrefix=FillBlankPlaceholderPrefix;exports.IMType=IMType;exports.MaterialType=MaterialType;exports.RightChoiceTag=RightChoiceTag;exports.TAG_END=TAG_END;exports.TAG_ID_REGEX=TAG_ID_REGEX;exports.TAG_ID_REGEX_G=TAG_ID_REGEX_G;exports.TAG_START=TAG_START;exports.TagCatalog=TagCatalog;exports.TagChapterSection=TagChapterSection;exports.TagFillBlank=TagFillBlank;exports.TagID=TagID;exports.TagMultipleChoice=TagMultipleChoice;exports.TagNewLine=TagNewLine;exports.TagSteps=TagSteps;exports.TagSubTitle=TagSubTitle;exports.TagTakeVideoGen=TagTakeVideoGen;exports.TagTakeVideoGuding=TagTakeVideoGuding;exports.TagTakeVideoJiang=TagTakeVideoJiang;exports.TagTakeVideoLa=TagTakeVideoLa;exports.TagTakeVideoSheng=TagTakeVideoSheng;exports.TagTakeVideoShuai=TagTakeVideoShuai;exports.TagTakeVideoTui=TagTakeVideoTui;exports.TagTakeVideoYao=TagTakeVideoYao;exports.TagTakeVideoYi=TagTakeVideoYi;exports.TagTask=TagTask;exports.TagUserName=TagUserName;exports.TagVideoAddAudio=TagVideoAddAudio;exports.TagVideoAddMusic=TagVideoAddMusic;exports.TagVideoCut=TagVideoCut;exports.TagVideoSort=TagVideoSort;exports.Tags=Tags;exports.arrayHasContent=arrayHasContent;exports.convertContentArrayToRawContent=convertContentArrayToRawContent;exports.convertDotToRawText=convertDotToRawText;exports.formatContent=formatContent;exports.generateIdTag=generateIdTag;exports.getDotFromRawText=getDotFromRawText;exports.getIdAndContentArrayFromText=getIdAndContentArrayFromText;exports.getMaterialIdsFromContent=getMaterialIdsFromContent;exports.isMaterialType=isMaterialType;exports.keyBy=keyBy;exports.parseContent=parseContent;
