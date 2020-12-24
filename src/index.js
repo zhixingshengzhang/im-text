@@ -8,6 +8,7 @@ import VideoSort from './loaders/VideoSort';
 import VideoCut from './loaders/VideoCut';
 import LoaderText from './loaders/Text';
 import ChapterSections from './loaders/ChapterSections';
+import Catalog from './loaders/Catalog';
 import {
   arrayHasContent,
   IMType,
@@ -29,6 +30,7 @@ const Loaders = [
   VideoAddMusic,
   VideoAddAudio,
   ChapterSections,
+  Catalog,
   // 目前单选题没有特殊标记，因此排序在最后
   SingleChoice,
   LoaderText,

@@ -43,6 +43,7 @@ export const TagTakeVideoGuding = '【拍视频-固定】';
 export const TagVideoAddAudio = '【视频素材-录音】';
 export const TagVideoAddMusic = '【视频素材-音乐】';
 export const TagChapterSection = '【本周关卡导航】';
+export const TagCatalog = '【目录】';
 export const generateIdTag = (id) => TagID + (id || nanoid()) + TagID;
 export const ChoiceStart = '- ';
 export const IMType = {
@@ -61,6 +62,7 @@ export const IMType = {
   videoAddMusic: 'videoAddMusic',
   takeVideoTLYY: 'takeVideoTLYY',
   chapterSections: 'chapterSections',
+  catalog: 'catalog',
 };
 export const Tags = [
   { tag: 'ID', type: 'ID' },
