@@ -31,6 +31,7 @@ export const TagMultipleChoice = '【多选题】';
 export const TagSubTitle = '【小标题】';
 export const TagVideoCut = '【视频素材剪辑】';
 export const TagVideoSort = '【视频素材排序】';
+export const TagTakeVideoTuiLaMerge = '【拍视频-推拉合成】';
 export const TagTakeVideoTui = '【拍视频-推】';
 export const TagTakeVideoLa = '【拍视频-拉】';
 export const TagTakeVideoYao = '【拍视频-摇】';

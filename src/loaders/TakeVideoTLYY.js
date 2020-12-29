@@ -11,6 +11,7 @@ import {
   TagTakeVideoTui,
   TagTakeVideoYao,
   TagTakeVideoYi,
+  TagTakeVideoTuiLaMerge,
 } from '../utils';
 export const config = {
   [TagTakeVideoTui]: 'tui',
@@ -22,6 +23,7 @@ export const config = {
   [TagTakeVideoSheng]: 'sheng',
   [TagTakeVideoJiang]: 'jiang',
   [TagTakeVideoGuding]: 'guding',
+  [TagTakeVideoTuiLaMerge]: 'tuilaMerge',
 };
 /**
  * 拍视频组件：推拉摇移
