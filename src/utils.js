@@ -13,6 +13,9 @@ export const keyBy = (items, key = 'id', keepItemReference = true) => {
     return result;
   }
   items.forEach((item) => {
+    if (!item) {
+      return;
+    }
     result[item[key]] = keepItemReference ? item : { ...item };
   });
   return result;
