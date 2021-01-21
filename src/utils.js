@@ -33,6 +33,8 @@ export const TagFillBlank = '【填空题】';
 export const TagMultipleChoice = '【多选题】';
 export const TagSubTitle = '【小标题】';
 export const TagVideoCut = '【视频素材剪辑】';
+export const TagVideoSplit = '【视频素材分割】';
+export const TagVideoMusicSplit = '【视频音乐分割】';
 export const TagVideoSort = '【视频素材排序】';
 export const TagTakeVideoTuiLaMerge = '【拍视频-推拉合成】';
 export const TagTakeVideoTui = '【拍视频-推】';
@@ -61,6 +63,8 @@ export const IMType = {
   steps: 'steps',
   subTitle: 'subTitle',
   videoCut: 'videoCut',
+  videoSplit: 'videoSplit',
+  videoMusicSplit: 'videoMusicSplit',
   videoSort: 'videoSort',
   videoAddAudio: 'videoAddAudio',
   videoAddMusic: 'videoAddMusic',
