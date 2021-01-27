@@ -11,6 +11,7 @@ import ChapterSections from './loaders/ChapterSections';
 import Catalog from './loaders/Catalog';
 import VideoSplit from './loaders/VideoSplit';
 import VideoMusicSplit from './loaders/VideoMusicSplit';
+import VideoCaiDian from './loaders/VideoCaiDian';
 import {
   arrayHasContent,
   IMType,
@@ -33,6 +34,7 @@ const Loaders = [
   VideoAddAudio,
   VideoSplit,
   VideoMusicSplit,
+  VideoCaiDian,
   ChapterSections,
   Catalog,
   // 目前单选题没有特殊标记，因此排序在最后
