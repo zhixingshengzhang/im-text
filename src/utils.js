@@ -46,6 +46,14 @@ export const TagTakeVideoShuai = '【拍视频-甩】';
 export const TagTakeVideoGen = '【拍视频-跟】';
 export const TagTakeVideoSheng = '【拍视频-升】';
 export const TagTakeVideoJiang = '【拍视频-降】';
+
+export const TagTakePhotoHuangJin = '【拍照片-黄金分割】'
+export const TagTakePhotoSanJiao = '【拍照片-三角】'
+export const TagTakePhotoChuiZhi = '【拍照片-垂直】'
+export const TagTakePhotoSanFen = '【拍照片-三分】'
+export const TagTakePhotoShuiPing = '【拍照片-水平】'
+export const TagTakePhotoDuiJiao = '【拍照片-对角】'
+
 export const TagTakeVideoGuding = '【拍视频-固定】';
 export const TagVideoAddAudio = '【视频素材-录音】';
 export const TagVideoAddMusic = '【视频素材-音乐】';
@@ -71,6 +79,7 @@ export const IMType = {
   videoAddAudio: 'videoAddAudio',
   videoAddMusic: 'videoAddMusic',
   takeVideoTLYY: 'takeVideoTLYY',
+  takePhoto: 'takePhoto',
   chapterSections: 'chapterSections',
   catalog: 'catalog',
 };

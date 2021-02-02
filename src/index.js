@@ -12,6 +12,7 @@ import Catalog from './loaders/Catalog';
 import VideoSplit from './loaders/VideoSplit';
 import VideoMusicSplit from './loaders/VideoMusicSplit';
 import VideoCaiDian from './loaders/VideoCaiDian';
+import TakePhoto from './loaders/TakePhoto';
 import {
   arrayHasContent,
   IMType,
@@ -28,6 +29,7 @@ const Loaders = [
   Steps,
   SubTitle,
   TakeVideoTLYY,
+  TakePhoto,
   VideoCut,
   VideoSort,
   VideoAddMusic,
