@@ -388,12 +388,13 @@ var convertContentArrayToRawContent = function convertContentArrayToRawContent(c
 
 var parseContent = function parseContent(content) {
   var list = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+  var TagsConfig = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : Tags;
 
   if (!content) {
     return list;
   }
 
-  var tagIndexList = Tags.map(function (_ref2) {
+  var tagIndexList = TagsConfig.map(function (_ref2) {
     var tag = _ref2.tag,
         type = _ref2.type;
     return {
