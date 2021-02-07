@@ -114,11 +114,11 @@ export const convertContentArrayToRawContent = (contentArray) => {
 /**
  * 将text按tag拆分成数组
  */
-export const parseContent = (content, list = []) => {
+export const parseContent = (content, list = [], TagsConfig = Tags) => {
   if (!content) {
     return list;
   }
-  const tagIndexList = Tags.map(({ tag, type }) => ({
+  const tagIndexList = TagsConfig.map(({ tag, type }) => ({
     tag,
     type,
     index: content.indexOf('【' + tag),

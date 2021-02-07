@@ -24,6 +24,18 @@ describe('im-text', function () {
     assert.strictEqual(contentArray[0].type, 'ID');
     assert.strictEqual(contentArray[1].type, 'video');
   });
+
+  it('parseContent custom tags', function () {
+    // 视频 音频 =》 音频 视频
+    const contentArray = parseContent(
+      '【ID】2【ID】【视频】1【视频】【测试】2【测试】',
+      [],
+      [{ tag: '测试', type: 'test' }]
+    );
+    assert.strictEqual(contentArray.length, 2);
+    assert.strictEqual(contentArray[0].type, 'normal');
+    assert.strictEqual(contentArray[1].type, 'test');
+  });
   it('getIdAndContentArrayFromText', function () {
     // 视频 音频 =》 音频 视频
     const { id, contentArray } = getIdAndContentArrayFromText(
