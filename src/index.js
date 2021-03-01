@@ -22,6 +22,7 @@ import {
 } from './utils';
 import VideoAddMusic from './loaders/VideoAddMusic';
 import VideoAddAudio from './loaders/VideoAddAudio';
+import InteractiveVideo from './loaders/InteractiveVideo';
 
 const Loaders = [
   MultipleChoice,
@@ -39,6 +40,7 @@ const Loaders = [
   VideoCaiDian,
   ChapterSections,
   Catalog,
+  InteractiveVideo,
   // 目前单选题没有特殊标记，因此排序在最后
   SingleChoice,
   LoaderText,

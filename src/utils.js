@@ -21,6 +21,7 @@ export const keyBy = (items, key = 'id', keepItemReference = true) => {
   return result;
 };
 export const TAG_START = '【';
+export const ID_REGEX = /[A-Za-z0-9_-]{21}/;
 export const TAG_ID_REGEX = /【ID】[A-Za-z0-9_-]+【ID】/;
 export const TAG_ID_REGEX_G = /【ID】[A-Za-z0-9_-]+【ID】/g;
 export const TAG_END = '】';
@@ -47,19 +48,21 @@ export const TagTakeVideoGen = '【拍视频-跟】';
 export const TagTakeVideoSheng = '【拍视频-升】';
 export const TagTakeVideoJiang = '【拍视频-降】';
 
-export const TagTakePhotoHuangJin = '【拍照片-黄金分割】'
-export const TagTakePhotoSanJiao = '【拍照片-三角】'
-export const TagTakePhotoChuiZhi = '【拍照片-垂直】'
-export const TagTakePhotoSanFen = '【拍照片-三分】'
-export const TagTakePhotoShuiPing = '【拍照片-水平】'
-export const TagTakePhotoDuiJiao = '【拍照片-对角】'
+export const TagTakePhotoHuangJin = '【拍照片-黄金分割】';
+export const TagTakePhotoSanJiao = '【拍照片-三角】';
+export const TagTakePhotoChuiZhi = '【拍照片-垂直】';
+export const TagTakePhotoSanFen = '【拍照片-三分】';
+export const TagTakePhotoShuiPing = '【拍照片-水平】';
+export const TagTakePhotoDuiJiao = '【拍照片-对角】';
 
 export const TagTakeVideoGuding = '【拍视频-固定】';
 export const TagVideoAddAudio = '【视频素材-录音】';
 export const TagVideoAddMusic = '【视频素材-音乐】';
 export const TagChapterSection = '【本周关卡导航】';
+export const TagInteractiveVideo = '【交互视频】';
 export const TagCatalog = '【目录】';
-export const generateIdTag = (id) => TagID + (id || nanoid()) + TagID;
+export const generateId = (id) => id || nanoid();
+export const generateIdTag = (id) => TagID + generateId(id) + TagID;
 export const ChoiceStart = '- ';
 export const IMType = {
   text: 'text', // 默认
@@ -82,6 +85,7 @@ export const IMType = {
   takePhoto: 'takePhoto',
   chapterSections: 'chapterSections',
   catalog: 'catalog',
+  interactiveVideo: 'interactiveVideo',
 };
 export const Tags = [
   { tag: 'ID', type: 'ID' },
