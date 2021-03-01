@@ -280,6 +280,7 @@ var keyBy = function keyBy(items) {
   return result;
 };
 var TAG_START = '【';
+var ID_REGEX = /[A-Za-z0-9_-]{21}/;
 var TAG_ID_REGEX = /【ID】[A-Za-z0-9_-]+【ID】/;
 var TAG_ID_REGEX_G = /【ID】[A-Za-z0-9_-]+【ID】/g;
 var TAG_END = '】';
@@ -315,9 +316,13 @@ var TagTakeVideoGuding = '【拍视频-固定】';
 var TagVideoAddAudio = '【视频素材-录音】';
 var TagVideoAddMusic = '【视频素材-音乐】';
 var TagChapterSection = '【本周关卡导航】';
+var TagInteractiveVideo = '【交互视频】';
 var TagCatalog = '【目录】';
+var generateId = function generateId(id) {
+  return id || nanoid();
+};
 var generateIdTag = function generateIdTag(id) {
-  return TagID + (id || nanoid()) + TagID;
+  return TagID + generateId(id) + TagID;
 };
 var ChoiceStart = '- ';
 var IMType = {
@@ -343,7 +348,8 @@ var IMType = {
   takeVideoTLYY: 'takeVideoTLYY',
   takePhoto: 'takePhoto',
   chapterSections: 'chapterSections',
-  catalog: 'catalog'
+  catalog: 'catalog',
+  interactiveVideo: 'interactiveVideo'
 };
 var Tags = [{
   tag: 'ID',
@@ -1267,7 +1273,60 @@ _defineProperty(VideoAddMusic, "prefixTag", TagVideoAddMusic);var VideoAddAudio 
 
 _defineProperty(VideoAddAudio, "imType", IMType.videoAddAudio);
 
-_defineProperty(VideoAddAudio, "prefixTag", TagVideoAddAudio);var Loaders = [MultipleChoice, FillBlank, Steps, SubTitle, TakeVideoTLYY, TakePhoto, VideoCut, VideoSort, VideoAddMusic, VideoAddAudio, VideoCut$1, VideoCut$2, VideoCaiDian, ChapterSections, Catalog, // 目前单选题没有特殊标记，因此排序在最后
+_defineProperty(VideoAddAudio, "prefixTag", TagVideoAddAudio);var InteractiveVideo = /*#__PURE__*/function (_BaseItem) {
+  _inherits(InteractiveVideo, _BaseItem);
+
+  var _super = _createSuper(InteractiveVideo);
+
+  function InteractiveVideo() {
+    _classCallCheck(this, InteractiveVideo);
+
+    return _super.apply(this, arguments);
+  }
+
+  _createClass(InteractiveVideo, null, [{
+    key: "parseContent",
+    value: function parseContent(textItems, materialsMap) {
+      var interactiveVideoId = null;
+      var items = textItems;
+
+      if (items.length > 0) {
+        var match = textItems[0].match(ID_REGEX);
+
+        if (match && match.index >= 0) {
+          interactiveVideoId = match[0];
+          items[0] = items[0].slice(0, match.index) + items[0].slice(match.index + interactiveVideoId.length);
+        }
+      }
+
+      return {
+        interactiveVideoId: interactiveVideoId,
+        content: items.filter(function (item) {
+          return !!item;
+        }).join('\n')
+      };
+    }
+  }, {
+    key: "unParseContent",
+    value: function unParseContent(dot) {
+      var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+      _objectDestructuringEmpty(_ref);
+
+      var contentArray = dot.contentArray,
+          interactiveVideoId = dot.interactiveVideoId;
+      return [interactiveVideoId, convertContentArrayToRawContent(contentArray)].filter(function (item) {
+        return !!item;
+      }).join('\n');
+    }
+  }]);
+
+  return InteractiveVideo;
+}(BaseItem);
+
+_defineProperty(InteractiveVideo, "imType", IMType.interactiveVideo);
+
+_defineProperty(InteractiveVideo, "prefixTag", TagInteractiveVideo);var Loaders = [MultipleChoice, FillBlank, Steps, SubTitle, TakeVideoTLYY, TakePhoto, VideoCut, VideoSort, VideoAddMusic, VideoAddAudio, VideoCut$1, VideoCut$2, VideoCaiDian, ChapterSections, Catalog, InteractiveVideo, // 目前单选题没有特殊标记，因此排序在最后
 SingleChoice, SingleChoice$1];
 var convertDotToRawText = function convertDotToRawText(dot) {
   var loadersMap = keyBy(Loaders, 'imType');
@@ -1343,4 +1402,4 @@ var getMaterialIdsFromContent = function getMaterialIdsFromContent(text) {
     }
   });
   return _toConsumableArray(ids);
-};exports.ChoiceStart=ChoiceStart;exports.FillBlankPlaceholderPrefix=FillBlankPlaceholderPrefix;exports.IMType=IMType;exports.MaterialType=MaterialType;exports.RightChoiceTag=RightChoiceTag;exports.TAG_END=TAG_END;exports.TAG_ID_REGEX=TAG_ID_REGEX;exports.TAG_ID_REGEX_G=TAG_ID_REGEX_G;exports.TAG_START=TAG_START;exports.TagCatalog=TagCatalog;exports.TagChapterSection=TagChapterSection;exports.TagFillBlank=TagFillBlank;exports.TagID=TagID;exports.TagMultipleChoice=TagMultipleChoice;exports.TagNewLine=TagNewLine;exports.TagSteps=TagSteps;exports.TagSubTitle=TagSubTitle;exports.TagTakePhotoChuiZhi=TagTakePhotoChuiZhi;exports.TagTakePhotoDuiJiao=TagTakePhotoDuiJiao;exports.TagTakePhotoHuangJin=TagTakePhotoHuangJin;exports.TagTakePhotoSanFen=TagTakePhotoSanFen;exports.TagTakePhotoSanJiao=TagTakePhotoSanJiao;exports.TagTakePhotoShuiPing=TagTakePhotoShuiPing;exports.TagTakeVideoGen=TagTakeVideoGen;exports.TagTakeVideoGuding=TagTakeVideoGuding;exports.TagTakeVideoJiang=TagTakeVideoJiang;exports.TagTakeVideoLa=TagTakeVideoLa;exports.TagTakeVideoSheng=TagTakeVideoSheng;exports.TagTakeVideoShuai=TagTakeVideoShuai;exports.TagTakeVideoTui=TagTakeVideoTui;exports.TagTakeVideoTuiLaMerge=TagTakeVideoTuiLaMerge;exports.TagTakeVideoYao=TagTakeVideoYao;exports.TagTakeVideoYi=TagTakeVideoYi;exports.TagTask=TagTask;exports.TagUserName=TagUserName;exports.TagVideoAddAudio=TagVideoAddAudio;exports.TagVideoAddMusic=TagVideoAddMusic;exports.TagVideoCaiDian=TagVideoCaiDian;exports.TagVideoCut=TagVideoCut;exports.TagVideoMusicSplit=TagVideoMusicSplit;exports.TagVideoSort=TagVideoSort;exports.TagVideoSplit=TagVideoSplit;exports.Tags=Tags;exports.arrayHasContent=arrayHasContent;exports.convertContentArrayToRawContent=convertContentArrayToRawContent;exports.convertDotToRawText=convertDotToRawText;exports.formatContent=formatContent;exports.generateIdTag=generateIdTag;exports.getDotFromRawText=getDotFromRawText;exports.getIdAndContentArrayFromText=getIdAndContentArrayFromText;exports.getMaterialIdsFromContent=getMaterialIdsFromContent;exports.isMaterialType=isMaterialType;exports.keyBy=keyBy;exports.parseContent=parseContent;
+};exports.ChoiceStart=ChoiceStart;exports.FillBlankPlaceholderPrefix=FillBlankPlaceholderPrefix;exports.ID_REGEX=ID_REGEX;exports.IMType=IMType;exports.MaterialType=MaterialType;exports.RightChoiceTag=RightChoiceTag;exports.TAG_END=TAG_END;exports.TAG_ID_REGEX=TAG_ID_REGEX;exports.TAG_ID_REGEX_G=TAG_ID_REGEX_G;exports.TAG_START=TAG_START;exports.TagCatalog=TagCatalog;exports.TagChapterSection=TagChapterSection;exports.TagFillBlank=TagFillBlank;exports.TagID=TagID;exports.TagInteractiveVideo=TagInteractiveVideo;exports.TagMultipleChoice=TagMultipleChoice;exports.TagNewLine=TagNewLine;exports.TagSteps=TagSteps;exports.TagSubTitle=TagSubTitle;exports.TagTakePhotoChuiZhi=TagTakePhotoChuiZhi;exports.TagTakePhotoDuiJiao=TagTakePhotoDuiJiao;exports.TagTakePhotoHuangJin=TagTakePhotoHuangJin;exports.TagTakePhotoSanFen=TagTakePhotoSanFen;exports.TagTakePhotoSanJiao=TagTakePhotoSanJiao;exports.TagTakePhotoShuiPing=TagTakePhotoShuiPing;exports.TagTakeVideoGen=TagTakeVideoGen;exports.TagTakeVideoGuding=TagTakeVideoGuding;exports.TagTakeVideoJiang=TagTakeVideoJiang;exports.TagTakeVideoLa=TagTakeVideoLa;exports.TagTakeVideoSheng=TagTakeVideoSheng;exports.TagTakeVideoShuai=TagTakeVideoShuai;exports.TagTakeVideoTui=TagTakeVideoTui;exports.TagTakeVideoTuiLaMerge=TagTakeVideoTuiLaMerge;exports.TagTakeVideoYao=TagTakeVideoYao;exports.TagTakeVideoYi=TagTakeVideoYi;exports.TagTask=TagTask;exports.TagUserName=TagUserName;exports.TagVideoAddAudio=TagVideoAddAudio;exports.TagVideoAddMusic=TagVideoAddMusic;exports.TagVideoCaiDian=TagVideoCaiDian;exports.TagVideoCut=TagVideoCut;exports.TagVideoMusicSplit=TagVideoMusicSplit;exports.TagVideoSort=TagVideoSort;exports.TagVideoSplit=TagVideoSplit;exports.Tags=Tags;exports.arrayHasContent=arrayHasContent;exports.convertContentArrayToRawContent=convertContentArrayToRawContent;exports.convertDotToRawText=convertDotToRawText;exports.formatContent=formatContent;exports.generateId=generateId;exports.generateIdTag=generateIdTag;exports.getDotFromRawText=getDotFromRawText;exports.getIdAndContentArrayFromText=getIdAndContentArrayFromText;exports.getMaterialIdsFromContent=getMaterialIdsFromContent;exports.isMaterialType=isMaterialType;exports.keyBy=keyBy;exports.parseContent=parseContent;
