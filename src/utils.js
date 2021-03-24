@@ -61,6 +61,8 @@ export const TagVideoAddMusic = '【视频素材-音乐】';
 export const TagChapterSection = '【本周关卡导航】';
 export const TagInteractiveVideo = '【交互视频】';
 export const TagCatalog = '【目录】';
+export const TagStudentTask = '【学员作业】';
+
 export const generateId = (id) => id || nanoid();
 export const generateIdTag = (id) => TagID + generateId(id) + TagID;
 export const ChoiceStart = '- ';
@@ -86,12 +88,14 @@ export const IMType = {
   chapterSections: 'chapterSections',
   catalog: 'catalog',
   interactiveVideo: 'interactiveVideo',
+  studentTask: 'studentTask',
 };
 export const Tags = [
   { tag: 'ID', type: 'ID' },
   { tag: '粗', type: 'bold' }, // 加粗
   { tag: '斜', type: 'italic' }, // 斜体
   { tag: '文本样式', type: 'textStyle' },
+  { tag: '章节引用', type: 'dotRefer' },
   { tag: '图片', type: MaterialType.image },
   { tag: '音频', type: MaterialType.audio },
   { tag: '视频', type: MaterialType.video },
@@ -99,11 +103,18 @@ export const Tags = [
 export const convertContentArrayToRawContent = (contentArray) => {
   const tagsMap = keyBy(Tags, 'type');
   return contentArray
-    .map(({ content, type }) => {
+    .map(({ content, type, tagProps = [] }) => {
       if (tagsMap[type]) {
+        let tagPropsStr = '';
+        if (arrayHasContent(tagProps)) {
+          tagPropsStr =
+            ' ' +
+            tagProps.map(({ name, value }) => `${name}=${value}`).join(' ');
+        }
         return (
           TAG_START +
           tagsMap[type].tag +
+          tagPropsStr +
           TAG_END +
           content +
           TAG_START +

@@ -13,6 +13,7 @@ import VideoSplit from './loaders/VideoSplit';
 import VideoMusicSplit from './loaders/VideoMusicSplit';
 import VideoCaiDian from './loaders/VideoCaiDian';
 import TakePhoto from './loaders/TakePhoto';
+import StudentTask from './loaders/StudentTask';
 import {
   arrayHasContent,
   IMType,
@@ -41,6 +42,7 @@ const Loaders = [
   ChapterSections,
   Catalog,
   InteractiveVideo,
+  StudentTask,
   // 目前单选题没有特殊标记，因此排序在最后
   SingleChoice,
   LoaderText,

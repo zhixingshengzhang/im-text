@@ -25,6 +25,12 @@ describe('im-text', function () {
     assert.strictEqual(contentArray[1].type, 'video');
   });
 
+  it('parseContent refer', function () {
+    const text =
+      '【ID】2【ID】\n【章节引用 章节=123123 内容=123123】123123【章节引用】';
+    assert.strictEqual(text, convertDotToRawText(getDotFromRawText(text)));
+  });
+
   it('parseContent custom tags', function () {
     // 视频 音频 =》 音频 视频
     const contentArray = parseContent(
