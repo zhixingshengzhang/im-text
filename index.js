@@ -318,6 +318,7 @@ var TagVideoAddMusic = '【视频素材-音乐】';
 var TagChapterSection = '【本周关卡导航】';
 var TagInteractiveVideo = '【交互视频】';
 var TagCatalog = '【目录】';
+var TagStudentTask = '【学员作业】';
 var generateId = function generateId(id) {
   return id || nanoid();
 };
@@ -349,7 +350,8 @@ var IMType = {
   takePhoto: 'takePhoto',
   chapterSections: 'chapterSections',
   catalog: 'catalog',
-  interactiveVideo: 'interactiveVideo'
+  interactiveVideo: 'interactiveVideo',
+  studentTask: 'studentTask'
 };
 var Tags = [{
   tag: 'ID',
@@ -366,6 +368,9 @@ var Tags = [{
   tag: '文本样式',
   type: 'textStyle'
 }, {
+  tag: '章节引用',
+  type: 'dotRefer'
+}, {
   tag: '图片',
   type: MaterialType.image
 }, {
@@ -379,10 +384,22 @@ var convertContentArrayToRawContent = function convertContentArrayToRawContent(c
   var tagsMap = keyBy(Tags, 'type');
   return contentArray.map(function (_ref) {
     var content = _ref.content,
-        type = _ref.type;
+        type = _ref.type,
+        _ref$tagProps = _ref.tagProps,
+        tagProps = _ref$tagProps === void 0 ? [] : _ref$tagProps;
 
     if (tagsMap[type]) {
-      return TAG_START + tagsMap[type].tag + TAG_END + content + TAG_START + tagsMap[type].tag + TAG_END;
+      var tagPropsStr = '';
+
+      if (arrayHasContent(tagProps)) {
+        tagPropsStr = ' ' + tagProps.map(function (_ref2) {
+          var name = _ref2.name,
+              value = _ref2.value;
+          return "".concat(name, "=").concat(value);
+        }).join(' ');
+      }
+
+      return TAG_START + tagsMap[type].tag + tagPropsStr + TAG_END + content + TAG_START + tagsMap[type].tag + TAG_END;
     }
 
     return content;
@@ -400,9 +417,9 @@ var parseContent = function parseContent(content) {
     return list;
   }
 
-  var tagIndexList = TagsConfig.map(function (_ref2) {
-    var tag = _ref2.tag,
-        type = _ref2.type;
+  var tagIndexList = TagsConfig.map(function (_ref3) {
+    var tag = _ref3.tag,
+        type = _ref3.type;
     return {
       tag: tag,
       type: type,
@@ -504,8 +521,8 @@ var TagUserNameRegex = /【用户名】/g;
 var TagNewLine = '【换行】';
 var TagNewLineRegex = /【换行】/g;
 var formatContent = function formatContent(content) {
-  var _ref3 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-      getUserName = _ref3.getUserName;
+  var _ref4 = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+      getUserName = _ref4.getUserName;
 
   var userName = (getUserName ? getUserName() : '') || '用户';
   return (content || '').replace(TagUserNameRegex, userName).replace(TagNewLineRegex, '\n');
@@ -1241,7 +1258,49 @@ var TakePhoto = /*#__PURE__*/function (_BaseItem) {
   return TakePhoto;
 }(BaseItem);
 
-_defineProperty(TakePhoto, "imType", IMType.takePhoto);var VideoAddMusic = /*#__PURE__*/function (_BaseItem) {
+_defineProperty(TakePhoto, "imType", IMType.takePhoto);/**
+ * 学员作业
+ * @example
+ * <pre>
+ *【学员作业】id string
+ * 自定义文案
+ * </pre>
+ */
+
+var StudentTask = /*#__PURE__*/function (_BaseItem) {
+  _inherits(StudentTask, _BaseItem);
+
+  var _super = _createSuper(StudentTask);
+
+  function StudentTask() {
+    _classCallCheck(this, StudentTask);
+
+    return _super.apply(this, arguments);
+  }
+
+  _createClass(StudentTask, null, [{
+    key: "parseContent",
+    value: function parseContent(items) {
+      return {
+        taskId: items[0] || '',
+        content: items.join('\n')
+      };
+    } // static unParseContent(dot, {} = {}) {
+    //   const { contentArray, takePhotoType } = dot;
+    //   return (
+    //     Object.keys(config).find((key) => config[key] == takePhotoType) +
+    //     convertContentArrayToRawContent(contentArray)
+    //   );
+    // }
+
+  }]);
+
+  return StudentTask;
+}(BaseItem);
+
+_defineProperty(StudentTask, "imType", IMType.studentTask);
+
+_defineProperty(StudentTask, "prefixTag", TagStudentTask);var VideoAddMusic = /*#__PURE__*/function (_BaseItem) {
   _inherits(VideoAddMusic, _BaseItem);
 
   var _super = _createSuper(VideoAddMusic);
@@ -1326,7 +1385,7 @@ _defineProperty(VideoAddAudio, "prefixTag", TagVideoAddAudio);var InteractiveVid
 
 _defineProperty(InteractiveVideo, "imType", IMType.interactiveVideo);
 
-_defineProperty(InteractiveVideo, "prefixTag", TagInteractiveVideo);var Loaders = [MultipleChoice, FillBlank, Steps, SubTitle, TakeVideoTLYY, TakePhoto, VideoCut, VideoSort, VideoAddMusic, VideoAddAudio, VideoCut$1, VideoCut$2, VideoCaiDian, ChapterSections, Catalog, InteractiveVideo, // 目前单选题没有特殊标记，因此排序在最后
+_defineProperty(InteractiveVideo, "prefixTag", TagInteractiveVideo);var Loaders = [MultipleChoice, FillBlank, Steps, SubTitle, TakeVideoTLYY, TakePhoto, VideoCut, VideoSort, VideoAddMusic, VideoAddAudio, VideoCut$1, VideoCut$2, VideoCaiDian, ChapterSections, Catalog, InteractiveVideo, StudentTask, // 目前单选题没有特殊标记，因此排序在最后
 SingleChoice, SingleChoice$1];
 var convertDotToRawText = function convertDotToRawText(dot) {
   var loadersMap = keyBy(Loaders, 'imType');
@@ -1402,4 +1461,4 @@ var getMaterialIdsFromContent = function getMaterialIdsFromContent(text) {
     }
   });
   return _toConsumableArray(ids);
-};exports.ChoiceStart=ChoiceStart;exports.FillBlankPlaceholderPrefix=FillBlankPlaceholderPrefix;exports.ID_REGEX=ID_REGEX;exports.IMType=IMType;exports.MaterialType=MaterialType;exports.RightChoiceTag=RightChoiceTag;exports.TAG_END=TAG_END;exports.TAG_ID_REGEX=TAG_ID_REGEX;exports.TAG_ID_REGEX_G=TAG_ID_REGEX_G;exports.TAG_START=TAG_START;exports.TagCatalog=TagCatalog;exports.TagChapterSection=TagChapterSection;exports.TagFillBlank=TagFillBlank;exports.TagID=TagID;exports.TagInteractiveVideo=TagInteractiveVideo;exports.TagMultipleChoice=TagMultipleChoice;exports.TagNewLine=TagNewLine;exports.TagSteps=TagSteps;exports.TagSubTitle=TagSubTitle;exports.TagTakePhotoChuiZhi=TagTakePhotoChuiZhi;exports.TagTakePhotoDuiJiao=TagTakePhotoDuiJiao;exports.TagTakePhotoHuangJin=TagTakePhotoHuangJin;exports.TagTakePhotoSanFen=TagTakePhotoSanFen;exports.TagTakePhotoSanJiao=TagTakePhotoSanJiao;exports.TagTakePhotoShuiPing=TagTakePhotoShuiPing;exports.TagTakeVideoGen=TagTakeVideoGen;exports.TagTakeVideoGuding=TagTakeVideoGuding;exports.TagTakeVideoJiang=TagTakeVideoJiang;exports.TagTakeVideoLa=TagTakeVideoLa;exports.TagTakeVideoSheng=TagTakeVideoSheng;exports.TagTakeVideoShuai=TagTakeVideoShuai;exports.TagTakeVideoTui=TagTakeVideoTui;exports.TagTakeVideoTuiLaMerge=TagTakeVideoTuiLaMerge;exports.TagTakeVideoYao=TagTakeVideoYao;exports.TagTakeVideoYi=TagTakeVideoYi;exports.TagTask=TagTask;exports.TagUserName=TagUserName;exports.TagVideoAddAudio=TagVideoAddAudio;exports.TagVideoAddMusic=TagVideoAddMusic;exports.TagVideoCaiDian=TagVideoCaiDian;exports.TagVideoCut=TagVideoCut;exports.TagVideoMusicSplit=TagVideoMusicSplit;exports.TagVideoSort=TagVideoSort;exports.TagVideoSplit=TagVideoSplit;exports.Tags=Tags;exports.arrayHasContent=arrayHasContent;exports.convertContentArrayToRawContent=convertContentArrayToRawContent;exports.convertDotToRawText=convertDotToRawText;exports.formatContent=formatContent;exports.generateId=generateId;exports.generateIdTag=generateIdTag;exports.getDotFromRawText=getDotFromRawText;exports.getIdAndContentArrayFromText=getIdAndContentArrayFromText;exports.getMaterialIdsFromContent=getMaterialIdsFromContent;exports.isMaterialType=isMaterialType;exports.keyBy=keyBy;exports.parseContent=parseContent;
+};exports.ChoiceStart=ChoiceStart;exports.FillBlankPlaceholderPrefix=FillBlankPlaceholderPrefix;exports.ID_REGEX=ID_REGEX;exports.IMType=IMType;exports.MaterialType=MaterialType;exports.RightChoiceTag=RightChoiceTag;exports.TAG_END=TAG_END;exports.TAG_ID_REGEX=TAG_ID_REGEX;exports.TAG_ID_REGEX_G=TAG_ID_REGEX_G;exports.TAG_START=TAG_START;exports.TagCatalog=TagCatalog;exports.TagChapterSection=TagChapterSection;exports.TagFillBlank=TagFillBlank;exports.TagID=TagID;exports.TagInteractiveVideo=TagInteractiveVideo;exports.TagMultipleChoice=TagMultipleChoice;exports.TagNewLine=TagNewLine;exports.TagSteps=TagSteps;exports.TagStudentTask=TagStudentTask;exports.TagSubTitle=TagSubTitle;exports.TagTakePhotoChuiZhi=TagTakePhotoChuiZhi;exports.TagTakePhotoDuiJiao=TagTakePhotoDuiJiao;exports.TagTakePhotoHuangJin=TagTakePhotoHuangJin;exports.TagTakePhotoSanFen=TagTakePhotoSanFen;exports.TagTakePhotoSanJiao=TagTakePhotoSanJiao;exports.TagTakePhotoShuiPing=TagTakePhotoShuiPing;exports.TagTakeVideoGen=TagTakeVideoGen;exports.TagTakeVideoGuding=TagTakeVideoGuding;exports.TagTakeVideoJiang=TagTakeVideoJiang;exports.TagTakeVideoLa=TagTakeVideoLa;exports.TagTakeVideoSheng=TagTakeVideoSheng;exports.TagTakeVideoShuai=TagTakeVideoShuai;exports.TagTakeVideoTui=TagTakeVideoTui;exports.TagTakeVideoTuiLaMerge=TagTakeVideoTuiLaMerge;exports.TagTakeVideoYao=TagTakeVideoYao;exports.TagTakeVideoYi=TagTakeVideoYi;exports.TagTask=TagTask;exports.TagUserName=TagUserName;exports.TagVideoAddAudio=TagVideoAddAudio;exports.TagVideoAddMusic=TagVideoAddMusic;exports.TagVideoCaiDian=TagVideoCaiDian;exports.TagVideoCut=TagVideoCut;exports.TagVideoMusicSplit=TagVideoMusicSplit;exports.TagVideoSort=TagVideoSort;exports.TagVideoSplit=TagVideoSplit;exports.Tags=Tags;exports.arrayHasContent=arrayHasContent;exports.convertContentArrayToRawContent=convertContentArrayToRawContent;exports.convertDotToRawText=convertDotToRawText;exports.formatContent=formatContent;exports.generateId=generateId;exports.generateIdTag=generateIdTag;exports.getDotFromRawText=getDotFromRawText;exports.getIdAndContentArrayFromText=getIdAndContentArrayFromText;exports.getMaterialIdsFromContent=getMaterialIdsFromContent;exports.isMaterialType=isMaterialType;exports.keyBy=keyBy;exports.parseContent=parseContent;
